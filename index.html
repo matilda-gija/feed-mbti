@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>피드 MBTI - 나의 피드 타입은?</title>
+  <title>피드 MBTI - 나의 피드 성향 분석 & 크리에이터 안내</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Jua & Gamja Flower -->
+  <!-- Google Fonts: Jua, Gamja Flower & Nanum Gothic -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
@@ -21,11 +21,9 @@
       background-size: 20px 20px;
     }
 
-    .handwriting {
-      font-family: 'Gamja Flower', cursive;
-    }
+    .handwriting { font-family: 'Gamja Flower', cursive; }
+    .nanum { font-family: 'Nanum Gothic', sans-serif; }
 
-    /* Notebook Base Frame */
     .notebook-container {
       background-color: #fffdf0;
       border: 3.5px solid #4a2c11;
@@ -33,7 +31,6 @@
       position: relative;
     }
 
-    /* Ring binder left strip */
     .ring-strip {
       position: absolute;
       left: -18px;
@@ -59,8 +56,8 @@
       background-color: #e2d2a4;
       color: #533922;
       border-radius: 20px;
-      padding: 5px 20px;
-      font-size: 1.1rem;
+      padding: 4px 14px;
+      font-size: 0.88rem;
       border: 1.5px solid #a89163;
       box-shadow: inset 0px 1px 2px rgba(255,255,255,0.7);
     }
@@ -72,15 +69,18 @@
       box-shadow: 0 4px 0 #281405;
       transition: all 0.15s ease;
     }
+    .btn-brown:hover { filter: brightness(1.08); }
+    .btn-brown:active { transform: translateY(3px); box-shadow: 0 1px 0 #281405; }
 
-    .btn-brown:hover {
-      filter: brightness(1.08);
+    .btn-green {
+      background: linear-gradient(180deg, #27ae60 0%, #1e8449 100%);
+      color: #ffffff;
+      border: 2.5px solid #145a32;
+      box-shadow: 0 4px 0 #0e3a20;
+      transition: all 0.15s ease;
     }
-
-    .btn-brown:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #281405;
-    }
+    .btn-green:hover { filter: brightness(1.08); }
+    .btn-green:active { transform: translateY(3px); box-shadow: 0 1px 0 #0e3a20; }
 
     .choice-card {
       background-color: #ffffff;
@@ -89,15 +89,13 @@
       box-shadow: 0 5px 0 #4a2c11;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-
     .choice-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 0 #4a2c11;
+      transform: translateY(-3px);
+      box-shadow: 0 7px 0 #4a2c11;
     }
 
-    /* Custom Title Styles */
     .title-mbti {
-      font-size: 4.5rem;
+      font-size: 3.5rem;
       line-height: 0.95;
       font-weight: bold;
       text-shadow: 3px 3px 0px #3d230e;
@@ -122,12 +120,44 @@
       text-shadow: 1px 1px 0 #0d5439;
       box-shadow: 0 2px 0 #106b49;
     }
+
+    .custom-input {
+      background-color: #ffffff;
+      border: 2.5px solid #4a2c11;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Nanum Gothic', sans-serif;
+      font-size: 0.92rem;
+      color: #3a2312;
+      outline: none;
+      width: 100%;
+    }
+    .custom-input:focus {
+      border-color: #1eb980;
+      box-shadow: 0 0 0 3px rgba(30, 185, 128, 0.25);
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1e4d3; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #8c6849; border-radius: 10px; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-3 sm:p-6">
+<body class="min-h-screen flex flex-col items-center justify-center p-3 sm:p-6">
 
-  <!-- Main Container / Notebook Frame -->
-  <div class="notebook-container w-full max-w-md min-h-[660px] rounded-2xl p-6 pt-8 pb-6 flex flex-col justify-between my-auto relative overflow-hidden">
+  <div class="w-full max-w-md flex justify-around mb-3 z-30 gap-1.5">
+    <button onclick="switchTab('test')" id="tab-test" class="flex-1 py-2 rounded-full text-xs sm:text-sm font-black transition-all bg-amber-950 text-amber-100 border-2 border-amber-950 shadow">
+      📱 피드 MBTI
+    </button>
+    <button onclick="switchTab('form')" id="tab-form" class="flex-1 py-2 rounded-full text-xs sm:text-sm font-black transition-all bg-amber-100/90 text-amber-950 border-2 border-amber-950 shadow hover:bg-amber-200">
+      📝 협업 지원
+    </button>
+    <button onclick="switchTab('responses')" id="tab-responses" class="flex-1 py-2 rounded-full text-xs sm:text-sm font-black transition-all bg-amber-100/90 text-amber-950 border-2 border-amber-950 shadow hover:bg-amber-200 flex items-center justify-center gap-1">
+      <span>🔒</span> <span>응답함(관리)</span>
+    </button>
+  </div>
+
+  <!-- Notebook Frame -->
+  <div class="notebook-container w-full max-w-md min-h-[660px] max-h-[92vh] rounded-2xl p-5 pt-7 pb-6 flex flex-col justify-between relative overflow-hidden">
     
     <!-- Left Binder Rings -->
     <div class="ring-strip">
@@ -143,13 +173,12 @@
     </div>
 
     <!-- ================= 1. START SCREEN ================= -->
-    <div id="start-screen" class="flex flex-col items-center justify-between text-center h-full flex-1 py-2">
-      <div class="space-y-3 w-full flex flex-col items-center">
-        <span class="badge-label font-bold inline-block">재미로 보는 간이 테스트</span>
+    <div id="start-screen" class="tab-content flex flex-col items-center justify-between text-center h-full flex-1 py-1">
+      <div class="space-y-2 w-full flex flex-col items-center">
+        <span class="badge-label font-bold inline-block">나의 SNS 피드 성향 분석</span>
         
-        <!-- Main Logo Area -->
-        <div class="relative py-2 my-1">
-          <div class="inline-block feed-badge text-2xl px-7 py-1 rounded-full font-extrabold tracking-wider transform -rotate-2">
+        <div class="relative py-1 my-1">
+          <div class="inline-block feed-badge text-2xl px-6 py-0.5 rounded-full font-extrabold tracking-wider transform -rotate-2">
             피드
           </div>
           <div class="title-mbti mt-1 tracking-tight">
@@ -157,510 +186,994 @@
           </div>
         </div>
 
-        <!-- Character Illustration -->
-        <div class="relative w-44 h-44 mx-auto my-2 flex items-center justify-center">
+        <div class="relative w-36 h-36 mx-auto my-1 flex items-center justify-center">
           <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
-            <!-- Character Base -->
             <circle cx="100" cy="115" r="46" fill="#fce0ca" stroke="#4a2c11" stroke-width="3"/>
             <path d="M 52 115 Q 52 58 100 58 Q 148 58 148 115 Q 132 82 100 82 Q 68 82 52 115 Z" fill="#3a2312" stroke="#4a2c11" stroke-width="2"/>
             <path d="M 68 82 Q 78 95 88 84 Q 100 96 112 84 Q 122 95 132 82 Q 100 78 68 82 Z" fill="#3a2312"/>
             <path d="M 82 56 Q 100 42 100 56 Q 100 42 118 56 Q 100 64 82 56 Z" fill="#e74c3c" stroke="#4a2c11" stroke-width="2"/>
             <circle cx="100" cy="56" r="5" fill="#c0392b"/>
-            <!-- Eyes -->
             <ellipse cx="84" cy="112" rx="4.5" ry="6.5" fill="#3a2312"/>
             <ellipse cx="116" cy="112" rx="4.5" ry="6.5" fill="#3a2312"/>
             <circle cx="85" cy="110" r="1.8" fill="#ffffff"/>
             <circle cx="117" cy="110" r="1.8" fill="#ffffff"/>
-            <!-- Blush -->
             <ellipse cx="76" cy="120" rx="9" ry="5" fill="#f8a5c2" opacity="0.85"/>
             <ellipse cx="124" cy="120" rx="9" ry="5" fill="#f8a5c2" opacity="0.85"/>
-            <!-- Smile Mouth -->
             <path d="M 91 123 Q 100 134 109 123 Z" fill="#e74c3c" stroke="#4a2c11" stroke-width="1.8"/>
-            <!-- Clothes -->
             <path d="M 66 155 Q 100 142 134 155 L 140 195 L 60 195 Z" fill="#f39c12" stroke="#4a2c11" stroke-width="3"/>
-            <path d="M 76 155 Q 100 146 124 155 L 128 195 L 72 195 Z" fill="#e84393" stroke="#4a2c11" stroke-width="2"/>
-            <!-- Hands -->
-            <circle cx="70" cy="165" r="7" fill="#fce0ca" stroke="#4a2c11" stroke-width="2"/>
-            <circle cx="130" cy="165" r="7" fill="#fce0ca" stroke="#4a2c11" stroke-width="2"/>
           </svg>
-
-          <!-- Speech Bubble -->
-          <div class="absolute -right-2 top-2 bg-white border-2 border-amber-950 rounded-2xl px-3 py-1 text-xs handwriting text-amber-950 font-bold shadow-sm transform rotate-6 z-10">
-            나의 피드 궁금해? ✨
+          <div class="absolute -right-2 top-0 bg-white border-2 border-amber-950 rounded-2xl px-2.5 py-1 text-xs handwriting text-amber-950 font-bold shadow-sm transform rotate-6 z-10">
+            나의 피드 유형은? ✨
           </div>
         </div>
       </div>
 
-      <!-- Action Button -->
-      <div class="w-full mt-6 space-y-3">
-        <button id="start-btn" onclick="startTest()" class="btn-brown w-full py-4 rounded-full text-2xl font-black tracking-wider shadow-md hover:scale-[1.02] transition-transform">
+      <div class="w-full mt-3 space-y-2">
+        <button id="start-btn" onclick="startTest()" class="btn-brown w-full py-3.5 rounded-full text-lg font-black tracking-wider shadow-md hover:scale-[1.01] transition-transform">
           테스트 시작하기
         </button>
-        <p class="text-xs handwriting text-amber-900 font-bold opacity-80">
-          * 총 6가지 간단한 질문으로 알아보는 나의 SNS 피드 성향!
-        </p>
+        <button onclick="switchTab('form')" class="btn-green w-full py-2.5 rounded-full text-xs sm:text-sm font-extrabold shadow-md">
+          📝 크리에이터/협업 정보 남기기
+        </button>
       </div>
     </div>
 
     <!-- ================= 2. QUESTION SCREEN ================= -->
-    <div id="question-screen" class="hidden flex-col justify-between h-full flex-1 relative">
+    <div id="question-screen" class="tab-content hidden flex-col justify-between h-full flex-1 relative">
       <div>
-        <!-- Top Status Badge -->
         <div class="text-center mb-2">
-          <span id="question-badge" class="badge-label font-bold text-xs inline-block">사진을 올리는 나</span>
+          <span id="question-badge" class="badge-label font-bold text-xs inline-block">질문 1. 사진을 올리는 나</span>
         </div>
 
-        <!-- Progress Bar & Count -->
         <div class="flex items-center gap-2 mb-3">
-          <div class="flex-1 bg-amber-200/80 h-3.5 rounded-full overflow-hidden border-2 border-amber-900">
+          <div class="flex-1 bg-amber-200/80 h-3 rounded-full overflow-hidden border-2 border-amber-900">
             <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 16.6%;"></div>
           </div>
           <span id="progress-text" class="text-amber-950 font-black text-xs">1 / 6</span>
         </div>
 
-        <!-- Main Question Title with OR badge -->
         <div class="text-center mb-4">
-          <h2 id="question-title-wrapper" class="text-xl sm:text-2xl font-black text-amber-950 leading-snug flex items-center justify-center flex-wrap gap-1.5">
-            <span id="title-left">고민 고민한다</span>
-            <span class="or-badge text-xs sm:text-sm px-2 py-0.5 rounded-full font-extrabold transform -rotate-3 inline-block">OR</span>
+          <h2 id="question-title-wrapper" class="text-lg font-black text-amber-950 leading-snug flex items-center justify-center flex-wrap gap-1.5">
+            <span id="title-left">신중하게</span>
+            <span class="or-badge text-xs px-2 py-0.5 rounded-full font-extrabold transform -rotate-3 inline-block">OR</span>
             <span id="title-right">바로 올린다</span>
           </h2>
         </div>
 
-        <!-- Choice Cards Container -->
         <div class="grid grid-cols-2 gap-3 mb-2">
-          <!-- Choice A -->
           <div onclick="selectChoice('A')" class="choice-card p-2.5 flex flex-col items-center cursor-pointer text-center group">
-            <span class="text-[11px] font-extrabold text-emerald-600 mb-1 tracking-wider">CLICK</span>
-            <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-2 mb-2 shadow-inner">
-              <div id="choice-a-img" class="w-full h-full flex items-center justify-center">
-                <!-- SVG Illustration -->
-              </div>
+            <span class="text-[10px] font-extrabold text-emerald-600 mb-1 tracking-wider">CLICK</span>
+            <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-2 mb-1.5 shadow-inner">
+              <div id="choice-a-img" class="w-full h-full flex items-center justify-center"></div>
             </div>
-            <p id="choice-a-text" class="text-xs sm:text-sm font-black text-amber-950 leading-tight">
-              신중하게 고민 고민...
-            </p>
+            <p id="choice-a-text" class="text-xs font-black text-amber-950 leading-tight">신중하게 고민 고민...</p>
           </div>
 
-          <!-- Choice B -->
           <div onclick="selectChoice('B')" class="choice-card p-2.5 flex flex-col items-center cursor-pointer text-center group">
-            <span class="text-[11px] font-extrabold text-emerald-600 mb-1 tracking-wider">CLICK</span>
-            <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-2 mb-2 shadow-inner">
-              <div id="choice-b-img" class="w-full h-full flex items-center justify-center">
-                <!-- SVG Illustration -->
-              </div>
+            <span class="text-[10px] font-extrabold text-emerald-600 mb-1 tracking-wider">CLICK</span>
+            <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-2 mb-1.5 shadow-inner">
+              <div id="choice-b-img" class="w-full h-full flex items-center justify-center"></div>
             </div>
-            <p id="choice-b-text" class="text-xs sm:text-sm font-black text-amber-950 leading-tight">
-              고민 없이 그냥 휙!
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer Pig Mascot & Note -->
-      <div class="flex items-end justify-between border-t-2 border-amber-900/10 pt-2 relative mt-1">
-        <span class="text-xs handwriting text-amber-900 font-bold max-w-[200px] leading-tight pb-1">
-          * 둘 다 해당되더라도 더 가깝다고 느껴지는 쪽을 골라봐!
-        </span>
-        
-        <div class="relative flex items-end">
-          <div class="bg-white border-2 border-amber-950 rounded-xl px-2 py-1 text-[11px] handwriting text-amber-950 font-bold shadow-sm mr-1 mb-2 transform -rotate-3">
-            고르기 힘들다...
-          </div>
-          <div class="w-14 h-14 relative transform translate-y-1">
-            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
-              <circle cx="50" cy="55" r="34" fill="#ffffff" stroke="#4a2c11" stroke-width="3"/>
-              <polygon points="25,30 38,20 38,36" fill="#ffffff" stroke="#4a2c11" stroke-width="2.5"/>
-              <polygon points="75,30 62,20 62,36" fill="#ffffff" stroke="#4a2c11" stroke-width="2.5"/>
-              <ellipse cx="50" cy="62" rx="10" ry="7" fill="#ffbebe" stroke="#4a2c11" stroke-width="2"/>
-              <circle cx="46" cy="62" r="1.8" fill="#4a2c11"/>
-              <circle cx="54" cy="62" r="1.8" fill="#4a2c11"/>
-              <path d="M 32 48 L 42 48" stroke="#4a2c11" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="62" cy="48" r="3.5" fill="#4a2c11"/>
-              <polygon points="50,12 80,25 50,35 20,25" fill="#3a2312"/>
-              <rect x="42" y="28" width="16" height="8" fill="#3a2312"/>
-            </svg>
+            <p id="choice-b-text" class="text-xs font-black text-amber-950 leading-tight">고민 없이 그냥 휙!</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ================= 3. LOADING SCREEN ================= -->
-    <div id="loading-screen" class="hidden flex-col items-center justify-center h-full flex-1 py-12 text-center">
-      <div class="w-20 h-20 mb-6 animate-bounce">
+    <div id="loading-screen" class="tab-content hidden flex-col items-center justify-center h-full flex-1 py-12 text-center">
+      <div class="w-16 h-16 mb-4 animate-bounce">
         <svg viewBox="0 0 100 100" class="w-full h-full">
           <rect x="15" y="20" width="70" height="60" rx="10" fill="#ffffff" stroke="#4a2c11" stroke-width="4"/>
           <circle cx="50" cy="50" r="18" fill="#1eb980" stroke="#4a2c11" stroke-width="3"/>
           <circle cx="50" cy="50" r="8" fill="#ffffff"/>
-          <circle cx="70" cy="32" r="4" fill="#e74c3c"/>
         </svg>
       </div>
-      <h3 class="text-2xl font-bold text-amber-950 mb-2">피드 분석 중... 🔍</h3>
-      <p class="text-sm handwriting text-amber-800">당신의 피드 스타일을 꼼꼼하게 따져보는 중입니다!</p>
+      <h3 class="text-xl font-bold text-amber-950 mb-1">피드 성향 분석 중... 🔍</h3>
+      <p class="text-xs handwriting text-amber-800">당신의 피드 스타일을 꼼꼼하게 측정하고 있습니다!</p>
     </div>
 
     <!-- ================= 4. RESULT SCREEN ================= -->
-    <div id="result-screen" class="hidden flex-col justify-between h-full flex-1">
-      <div class="text-center space-y-2">
-        <span class="badge-label font-bold text-xs inline-block">나의 피드 결과 분석</span>
+    <div id="result-screen" class="tab-content hidden flex-col justify-between h-full flex-1 overflow-y-auto pr-1">
+      <div class="text-center space-y-1.5">
+        <span class="badge-label font-bold text-[11px] inline-block">나의 피드 분석 결과</span>
         
-        <h3 id="result-subtitle" class="text-amber-900 font-bold text-sm leading-tight">
-          당신은... 반전의 매력!
-        </h3>
-        
-        <h1 id="result-title" class="text-2xl sm:text-3xl font-black text-amber-950 leading-tight">
-          재치 만점 '즉흥러'!
-        </h1>
+        <h3 id="result-subtitle" class="text-amber-900 font-bold text-xs">당신은... 반전의 매력!</h3>
+        <h1 id="result-title" class="text-lg sm:text-xl font-black text-amber-950 leading-tight">재치 만점 '즉흥러'!</h1>
 
-        <div class="bg-amber-100/90 border-2 border-amber-900/30 rounded-xl px-3 py-1 text-xs font-black text-amber-950 inline-block shadow-sm">
+        <div class="bg-amber-100/90 border border-amber-900/30 rounded-lg px-2.5 py-0.5 text-[11px] font-black text-amber-950 inline-block">
           [ 결과: <span id="result-tag" class="text-emerald-700">즉흥적인 feed 업로더</span> ]
         </div>
 
-        <!-- Polaroid Result Card -->
-        <div class="bg-white border-2 border-amber-950 rounded-2xl p-3 shadow-md mx-auto max-w-[290px] mt-1">
-          <div id="result-illustration" class="w-full h-32 rounded-xl bg-amber-50 border border-amber-900/20 flex items-center justify-center p-2 mb-2 shadow-inner">
-            <!-- Dynamic Result SVG -->
-          </div>
-          <p id="result-quote" class="text-xs handwriting text-amber-900 font-bold">
-            * 생각보다 행동이 먼저! 재밌는 건 바로 올려야지!
-          </p>
+        <div class="bg-white border-2 border-amber-950 rounded-xl p-2 shadow-sm mx-auto max-w-[250px]">
+          <div id="result-illustration" class="w-full h-24 rounded-lg bg-amber-50 border border-amber-900/20 flex items-center justify-center p-1 mb-1 shadow-inner"></div>
+          <p id="result-quote" class="text-xs handwriting text-amber-900 font-bold">* 생각보다 행동이 먼저!</p>
         </div>
 
-        <!-- Trait Points -->
-        <div class="bg-white/90 border-2 border-amber-900/40 rounded-xl p-3 text-left text-xs text-amber-950 space-y-1 shadow-sm">
-          <p id="trait-1" class="font-bold flex items-start gap-1.5">
-            <span>💡</span> <span>순발력과 재치로 기발한 업로드!</span>
-          </p>
-          <p id="trait-2" class="font-bold flex items-start gap-1.5">
-            <span>🎉</span> <span>친구들과의 즐거움과 소통이 최우선!</span>
-          </p>
-          <p id="trait-3" class="font-bold flex items-start gap-1.5">
-            <span>⭐</span> <span>가끔은 너무 즉흥적이라 나중에 후회할 수도...?</span>
+        <div class="bg-white/90 border-2 border-amber-900/40 rounded-xl p-2.5 text-left text-[11px] text-amber-950 space-y-1 shadow-sm nanum">
+          <p id="trait-1" class="font-bold flex items-start gap-1"><span>💡</span> <span>특징 1</span></p>
+          <p id="trait-2" class="font-bold flex items-start gap-1"><span>🎉</span> <span>특징 2</span></p>
+          <p id="trait-3" class="font-bold flex items-start gap-1"><span>⭐</span> <span>특징 3</span></p>
+        </div>
+
+        <!-- NEW: Creator & Collaboration Invite Box (Requested Wording) -->
+        <div class="bg-emerald-50 border-2 border-emerald-700/60 rounded-xl p-3 text-left space-y-1.5 shadow-sm mt-2">
+          <div class="flex items-center gap-1.5 text-emerald-900 font-extrabold text-xs">
+            <span>✨</span>
+            <span>더 자세한 피드 분석 & 크리에이터 협업</span>
+          </div>
+          <p class="text-[11px] text-emerald-950 font-bold leading-relaxed nanum">
+            더 자세한 피드 분석을 원하거나 크리에이터&인플루언서 활동에 관심 있다면 간단한 정보만 남겨주시면, 관련 협업 기회 · 미팅 일정 바로 개별 안내 드릴게요 :)
           </p>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t-2 border-amber-900/20">
-        <button onclick="restartTest()" class="btn-brown py-2.5 rounded-xl text-sm font-bold">
-          다시 테스트하기
+      <div class="space-y-2 mt-3 pt-2 border-t-2 border-amber-900/20">
+        <button onclick="switchTab('form')" class="btn-green w-full py-2.5 rounded-xl text-sm font-black shadow-md flex items-center justify-center gap-1.5">
+          <span>📝</span> 간단한 정보 남기기 (협업 지원)
         </button>
-        <button onclick="shareResult()" class="btn-brown py-2.5 rounded-xl text-sm font-bold bg-amber-800">
-          결과 공유하기
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="restartTest()" class="btn-brown py-2 rounded-xl text-xs font-bold">다시 테스트</button>
+          <button onclick="shareResult()" class="btn-brown py-2 rounded-xl text-xs font-bold bg-amber-800">결과 공유</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= 5. APPLICATION FORM SCREEN ================= -->
+    <div id="form-screen" class="tab-content hidden flex-col justify-between h-full flex-1 overflow-y-auto pr-1">
+      <div class="space-y-2.5">
+        <div class="text-center">
+          <span class="badge-label font-bold text-xs inline-block">크리에이터 / 서포터즈 협업 안내</span>
+          <h2 class="text-lg font-black text-amber-950 mt-1">간단한 정보 남기기 📝</h2>
+          <p class="text-[11px] text-amber-800 nanum font-bold leading-tight mt-0.5">
+            관련 협업 기회 · 미팅 일정을 개별 안내드립니다!
+          </p>
+        </div>
+
+        <form id="applicant-form" onsubmit="handleFormSubmit(event)" class="space-y-2.5">
+          <div>
+            <label class="block text-xs font-extrabold text-amber-950 mb-1">성함 / 닉네임 *</label>
+            <input type="text" id="app-name" required placeholder="홍길동" class="custom-input">
+          </div>
+
+          <div>
+            <label class="block text-xs font-extrabold text-amber-950 mb-1">연락처 (이메일 또는 전화번호) *</label>
+            <input type="text" id="app-contact" required placeholder="example@email.com 또는 010-0000-0000" class="custom-input">
+          </div>
+
+          <div>
+            <label class="block text-xs font-extrabold text-amber-950 mb-1">SNS 계정 / 피드 주소 *</label>
+            <input type="text" id="app-sns" required placeholder="@instagram_id 또는 피드 주소" class="custom-input">
+          </div>
+
+          <div>
+            <label class="block text-xs font-extrabold text-amber-950 mb-1">나의 피드 MBTI 결과 (선택)</label>
+            <select id="app-mbti" class="custom-input bg-white font-bold text-amber-900">
+              <option value="미선택 (직접입력)">테스트 안함 / 직접 선택</option>
+              <option value="⚡ 재치 만점 '즉흥 벼락업로더'">⚡ 재치 만점 '즉흥 벼락업로더'</option>
+              <option value="🎞️ 완벽주의 '감성 큐레이터'">🎞️ 완벽주의 '감성 큐레이터'</option>
+              <option value="☕ 소소한 '일상 기록가'">☕ 소소한 '일상 기록가'</option>
+              <option value="📖 정성 가득 'TMI 스토리텔러'">📖 정성 가득 'TMI 스토리텔러'</option>
+              <option value="👀 조용한 정보통 '프로 눈팅러'">👀 조용한 정보통 '프로 눈팅러'</option>
+              <option value="📦 추억 박물관 관장 '디지털 아카이버'">📦 추억 박물관 관장 '디지털 아카이버'</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-extrabold text-amber-950 mb-1">간단한 소개 및 희망 협업 분야 *</label>
+            <textarea id="app-intro" required rows="3" placeholder="관심 있는 연출 스타일이나 하고 싶으신 미팅 내용 등을 자유롭게 적어주세요!" class="custom-input resize-none"></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-green w-full py-3 rounded-xl text-base font-black shadow-md mt-2 flex items-center justify-center gap-1.5">
+            <span>🚀</span> 정보 제출하기
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ================= 6. RESPONSES INBOX SCREEN (ADMIN ONLY) ================= -->
+    <div id="responses-screen" class="tab-content hidden flex-col h-full flex-1 overflow-hidden">
+      
+      <!-- Top Admin Header -->
+      <div class="flex items-center justify-between pb-2 mb-2 border-b-2 border-amber-900/20">
+        <div>
+          <span class="badge-label font-bold text-[10px] inline-block py-0.5 px-2">🔒 관리자 전용 대시보드</span>
+          <h2 class="text-base font-black text-amber-950">테스트 통계 & 지원 응답함 📥</h2>
+        </div>
+        <button onclick="lockAdminSession()" class="px-2.5 py-1 bg-amber-900 text-amber-100 rounded-lg text-xs font-bold border border-amber-950 hover:bg-amber-800 shadow-sm">
+          🔒 잠금
         </button>
+      </div>
+
+      <!-- Private Analytics Summary Card -->
+      <div class="bg-amber-100/80 border-2 border-amber-900/30 rounded-xl p-2.5 mb-2 text-xs font-black text-amber-950 grid grid-cols-3 gap-1 text-center shadow-inner">
+        <div class="bg-white/80 p-1.5 rounded-lg border border-amber-900/20">
+          <span class="text-[10px] text-amber-800 block">📊 총 테스트 완료</span>
+          <span id="stat-test-count" class="text-sm text-emerald-700">0회</span>
+        </div>
+        <div class="bg-white/80 p-1.5 rounded-lg border border-amber-900/20">
+          <span class="text-[10px] text-amber-800 block">📝 지원서 접수</span>
+          <span id="stat-app-count" class="text-sm text-blue-700">0건</span>
+        </div>
+        <div class="bg-white/80 p-1.5 rounded-lg border border-amber-900/20">
+          <span class="text-[10px] text-amber-800 block">📈 관심 전환율</span>
+          <span id="stat-conversion" class="text-sm text-purple-700">0.0%</span>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex items-center justify-between text-xs mb-2">
+        <span id="response-count" class="font-extrabold text-amber-900">총 0개의 제출 건</span>
+        <select id="response-filter" onchange="filterResponses()" class="px-2 py-1 bg-white border-2 border-amber-950 rounded-lg text-xs font-bold text-amber-950">
+          <option value="ALL">전체 보기</option>
+          <option value="대기중">대기중</option>
+          <option value="합격">미팅 예정/진행</option>
+          <option value="불합격">보류</option>
+        </select>
+      </div>
+
+      <!-- Responses List Container -->
+      <div id="responses-list" class="flex-1 overflow-y-auto space-y-2 pr-1 my-1">
+        <div class="text-center py-10 text-amber-800 text-xs font-bold">
+          데이터를 불러오는 중입니다... 🔄
+        </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast-message" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-950 text-amber-100 px-4 py-2 rounded-full text-xs font-bold shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-    테스트 링크가 복사되었습니다! 🎉
+  <!-- ================= PIN AUTH MODAL ================= -->
+  <div id="pin-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-[#fffdf0] border-4 border-[#4a2c11] rounded-2xl p-5 w-full max-w-xs shadow-2xl text-center space-y-3">
+      <div class="w-12 h-12 bg-amber-100 border-2 border-amber-900 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+        🔒
+      </div>
+      <div>
+        <h3 class="text-lg font-black text-amber-950">관리자 전용 인증</h3>
+        <p class="text-xs handwriting text-amber-800 mt-0.5">테스트 참여 수 & 응답함은 본인만 확인 가능합니다!</p>
+        <p class="text-[11px] text-amber-600 font-bold mt-1">(기본 비밀번호: <span class="underline">1234</span>)</p>
+      </div>
+
+      <form onsubmit="handlePinSubmit(event)" class="space-y-2">
+        <input type="password" id="pin-input" maxlength="8" placeholder="비밀번호 입력" required class="custom-input text-center text-lg font-black tracking-widest">
+        <p id="pin-error" class="text-xs text-red-600 font-bold hidden">비밀번호가 일치하지 않습니다.</p>
+        
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" onclick="cancelPinAuth()" class="btn-brown py-2 rounded-xl text-xs font-bold">취소</button>
+          <button type="submit" class="btn-green py-2 rounded-xl text-xs font-bold">확인</button>
+        </div>
+      </form>
+    </div>
   </div>
+
+  <!-- ================= CANDIDATE DETAIL MODAL ================= -->
+  <div id="detail-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-[#fffdf0] border-4 border-[#4a2c11] rounded-2xl p-5 w-full max-w-sm shadow-2xl space-y-3 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b-2 border-amber-900/20 pb-2">
+        <span id="detail-status-badge" class="px-2.5 py-0.5 bg-amber-200 border border-amber-900 text-amber-950 rounded-full text-xs font-bold">
+          대기중
+        </span>
+        <button onclick="closeDetailModal()" class="text-amber-950 font-black text-lg hover:text-red-600 px-2">✕</button>
+      </div>
+
+      <div class="space-y-2 text-xs text-amber-950 nanum">
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">성함 / 닉네임</span>
+          <p id="detail-name" class="text-sm font-black text-amber-950">홍길동</p>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">연락처</span>
+          <p id="detail-contact" class="font-bold text-amber-900 select-all">010-0000-0000</p>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">SNS 계정 / 피드</span>
+          <p id="detail-sns" class="font-bold text-blue-800 break-all select-all">@instagram</p>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">피드 MBTI 결과</span>
+          <p id="detail-mbti" class="font-extrabold text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-200 mt-0.5">
+            ⚡ 재치 만점 '즉흥 벼락업로더'
+          </p>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">소개 및 희망 분야</span>
+          <div id="detail-intro" class="bg-white p-2.5 rounded-xl border border-amber-900/30 whitespace-pre-wrap mt-0.5 leading-relaxed">
+            내용...
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-extrabold text-amber-700 block">제출 일시</span>
+          <p id="detail-date" class="text-[10px] text-amber-700 font-bold">2026.09.03 12:00</p>
+        </div>
+      </div>
+
+      <!-- Admin Status Actions -->
+      <div class="pt-2 border-t-2 border-amber-900/20 space-y-2">
+        <label class="block text-xs font-black text-amber-950">상태 관리</label>
+        <div class="grid grid-cols-3 gap-1.5">
+          <button onclick="updateApplicantStatus('대기중')" class="py-1.5 bg-amber-200 text-amber-950 rounded-lg text-xs font-bold border border-amber-900 hover:bg-amber-300">대기중</button>
+          <button onclick="updateApplicantStatus('미팅예정')" class="py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">미팅예정</button>
+          <button onclick="updateApplicantStatus('보류')" class="py-1.5 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700">보류</button>
+        </div>
+        <button onclick="deleteApplicant()" class="w-full py-2 bg-rose-100 text-rose-800 rounded-xl text-xs font-extrabold border border-rose-300 hover:bg-rose-200 mt-1">
+          🗑️ 데이터 삭제하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM TOAST -->
+  <div id="toast-msg" class="fixed bottom-6 bg-amber-950 text-amber-100 px-4 py-2.5 rounded-full text-xs font-black border-2 border-amber-800 shadow-xl transition-all duration-300 transform translate-y-16 opacity-0 z-50 pointer-events-none flex items-center gap-2">
+    <span id="toast-text">알림 메세지</span>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'feed-mbti-app';
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+      apiKey: "dummy", authDomain: "dummy", projectId: "dummy"
+    };
+
+    let app, auth, db;
+    let currentUser = null;
+    let allApplications = [];
+    let totalTestCount = 0;
+
+    async function initFirebase() {
+      try {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
+          currentUser = userCredential.user;
+        } else {
+          const userCredential = await signInAnonymously(auth);
+          currentUser = userCredential.user;
+        }
+
+        setupFirestoreListeners();
+      } catch (err) {
+        console.warn("Firebase Auth fallback:", err);
+      }
+    }
+
+    function setupFirestoreListeners() {
+      if (!db || !currentUser) return;
+      
+      // Strict paths
+      const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
+      const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counter');
+
+      // Listen for applications
+      onSnapshot(colRef, (snapshot) => {
+        allApplications = [];
+        snapshot.forEach((docSnap) => {
+          allApplications.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        allApplications.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+        if (window.isAdminAuthenticated) {
+          renderResponsesList();
+        }
+      }, (error) => console.error("Applications listener error:", error));
+
+      // Listen for test count stat
+      onSnapshot(statsRef, (docSnap) => {
+        if (docSnap.exists()) {
+          totalTestCount = docSnap.data().testCount || 0;
+        } else {
+          totalTestCount = 0;
+        }
+        if (window.isAdminAuthenticated) {
+          updateStatsUI();
+        }
+      }, (error) => console.error("Stats listener error:", error));
+    }
+
+    // Record test completion count silently
+    window.recordTestCompletion = async function() {
+      totalTestCount++;
+      if (!db || !currentUser) return;
+      try {
+        const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counter');
+        await setDoc(statsRef, { testCount: increment(1) }, { merge: true });
+      } catch (e) {
+        console.error("Record test count error:", e);
+      }
+    };
+
+    window.saveApplicationToCloud = async function(formData) {
+      if (!db || !currentUser) {
+        allApplications.unshift({ id: 'local-' + Date.now(), ...formData });
+        return true;
+      }
+
+      try {
+        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
+        await addDoc(colRef, formData);
+        return true;
+      } catch (e) {
+        console.error("Save application error:", e);
+        return false;
+      }
+    };
+
+    window.updateStatusInCloud = async function(appIdToUpdate, newStatus) {
+      if (!db || !currentUser) {
+        const item = allApplications.find(a => a.id === appIdToUpdate);
+        if (item) item.status = newStatus;
+        renderResponsesList();
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applications', appIdToUpdate);
+        await updateDoc(docRef, { status: newStatus });
+      } catch (e) {
+        console.error("Update status error:", e);
+      }
+    };
+
+    window.deleteAppFromCloud = async function(appIdToDelete) {
+      if (!db || !currentUser) {
+        allApplications = allApplications.filter(a => a.id !== appIdToDelete);
+        renderResponsesList();
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applications', appIdToDelete);
+        await deleteDoc(docRef);
+      } catch (e) {
+        console.error("Delete doc error:", e);
+      }
+    };
+
+    window.getTestCount = () => totalTestCount;
+    window.getApplications = () => allApplications;
+
+    window.addEventListener('DOMContentLoaded', initFirebase);
+  </script>
 
   <script>
     const questions = [
       {
-        badge: "질문 1. 사진을 올리는 나",
-        titleLeft: "고민 고민한다",
-        titleRight: "바로 올린다",
+        badge: "질문 1. 사진을 올리기 전...",
+        leftTitle: "신중하게",
+        rightTitle: "바로 올린다",
         choiceA: {
           text: "신중하게 고민 고민...",
           score: { R: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="55" r="30" fill="#fce0ca" stroke="#4a2c11" stroke-width="2.5"/><path d="M 25 55 Q 25 25 50 25 Q 75 25 75 55 Z" fill="#3a2312"/><circle cx="42" cy="55" r="3" fill="#3a2312"/><circle cx="58" cy="55" r="3" fill="#3a2312"/><path d="M 45 68 Q 50 64 55 68" fill="none" stroke="#4a2c11" stroke-width="2"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><circle cx="50" cy="50" r="35" fill="#fde047" stroke="#4a2c11" stroke-width="3"/><circle cx="38" cy="42" r="4" fill="#3a2312"/><circle cx="62" cy="42" r="4" fill="#3a2312"/><path d="M 38 62 Q 50 52 62 62" stroke="#3a2312" stroke-width="3" fill="none"/></svg>`
         },
         choiceB: {
           text: "고민 없이 그냥 휙!",
           score: { S: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="55" r="30" fill="#fce0ca" stroke="#4a2c11" stroke-width="2.5"/><path d="M 25 55 Q 25 25 50 25 Q 75 25 75 55 Z" fill="#3a2312"/><circle cx="40" cy="52" r="3" fill="#3a2312"/><circle cx="60" cy="52" r="3" fill="#3a2312"/><path d="M 43 64 Q 50 74 57 64 Z" fill="#e74c3c" stroke="#4a2c11" stroke-width="1.5"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><circle cx="50" cy="50" r="35" fill="#38bdf8" stroke="#4a2c11" stroke-width="3"/><circle cx="38" cy="42" r="4" fill="#3a2312"/><circle cx="62" cy="42" r="4" fill="#3a2312"/><path d="M 35 58 Q 50 72 65 58" stroke="#3a2312" stroke-width="3" fill="none"/></svg>`
         }
       },
       {
-        badge: "질문 2. 사진을 고를 때",
-        titleLeft: "색감 보정 필수",
-        titleRight: "원본 보정 없음",
+        badge: "질문 2. 사진 보정 스타일에 대해...",
+        leftTitle: "필터/보정 필수",
+        rightTitle: "원본 편안함",
         choiceA: {
-          text: "필터/톤앤매너 완벽 체크",
+          text: "필터 & 톤앤매너 완벽 체크!",
           score: { A: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="20" y="25" width="60" height="50" rx="6" fill="#69c0ec" stroke="#4a2c11" stroke-width="2.5"/><circle cx="35" cy="40" r="6" fill="#f2ba2b"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="20" width="60" height="60" rx="12" fill="#a855f7" stroke="#4a2c11" stroke-width="3"/><polygon points="50,30 58,45 75,48 63,60 66,77 50,68 34,77 37,60 25,48 42,45" fill="#fde047"/></svg>`
         },
         choiceB: {
-          text: "원본 감성 그대로 편하게",
+          text: "보정 없이 원본 느낌 그대로",
           score: { N: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="25" y="20" width="50" height="60" rx="4" fill="#ffffff" stroke="#4a2c11" stroke-width="2.5"/><circle cx="50" cy="42" r="14" fill="#f8a5c2"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="20" width="60" height="60" rx="12" fill="#4ade80" stroke="#4a2c11" stroke-width="3"/><circle cx="50" cy="50" r="20" fill="#ffffff" stroke="#4a2c11" stroke-width="2"/><path d="M 35 60 Q 50 40 65 60" fill="#16a34a"/></svg>`
         }
       },
       {
-        badge: "질문 3. 피드 글 작성 스타일",
-        titleLeft: "감성 한 줄 코멘트",
-        titleRight: "TMI 일기장 작성",
+        badge: "질문 3. 피드 글 작성 스타일은?",
+        leftTitle: "감성 한 줄",
+        rightTitle: "TMI 일기장",
         choiceA: {
           text: "깔끔하고 감성적인 짧은 글",
           score: { C: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 30 35 L 70 35 M 30 50 L 55 50" stroke="#4a2c11" stroke-width="4" stroke-linecap="round"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="30" width="60" height="40" rx="8" fill="#ffffff" stroke="#4a2c11" stroke-width="3"/><line x1="30" y1="45" x2="70" y2="45" stroke="#3a2312" stroke-width="4"/><line x1="30" y1="58" x2="50" y2="58" stroke="#38bdf8" stroke-width="4"/></svg>`
         },
         choiceB: {
-          text: "오늘 있었던 일 정성 TMI",
+          text: "오늘 정성 가득한 장문 TMI",
           score: { D: 2 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="25" y="20" width="50" height="60" rx="4" fill="#ffffff" stroke="#4a2c11" stroke-width="2.5"/><path d="M 32 32 L 68 32 M 32 42 L 68 42 M 32 52 L 68 52" stroke="#4a2c11" stroke-width="2.5" stroke-linecap="round"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="15" width="60" height="70" rx="8" fill="#fff7ed" stroke="#4a2c11" stroke-width="3"/><line x1="30" y1="30" x2="70" y2="30" stroke="#ea580c" stroke-width="3"/><line x1="30" y1="42" x2="70" y2="42" stroke="#ea580c" stroke-width="3"/><line x1="30" y1="54" x2="70" y2="54" stroke="#ea580c" stroke-width="3"/></svg>`
         }
       },
       {
-        badge: "질문 4. 사진 업로드 위치는?",
-        titleLeft: "24시간 스토리",
-        titleRight: "박제되는 피드",
+        badge: "질문 4. 사진 업로드 주로 어디에 해?",
+        leftTitle: "24시간 스토리",
+        rightTitle: "박제되는 피드",
         choiceA: {
-          text: "부담 없는 '스토리' 투척",
+          text: "부담 없는 '스토리' 투척!",
           score: { S: 1, N: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="50" r="30" fill="none" stroke="#e84393" stroke-width="5" stroke-dasharray="6 3"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><circle cx="50" cy="50" r="32" fill="none" stroke="#f43f5e" stroke-width="5" stroke-dasharray="8 4"/><circle cx="50" cy="50" r="24" fill="#fb7185"/></svg>`
         },
         choiceB: {
-          text: "영구 박제 피드 자리를 고민",
+          text: "메인 프로필 피드 영구 박제!",
           score: { R: 1, A: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="20" y="20" width="60" height="60" rx="6" fill="#ffffff" stroke="#4a2c11" stroke-width="3"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="20" width="26" height="26" rx="4" fill="#60a5fa" stroke="#4a2c11" stroke-width="2"/><rect x="54" y="20" width="26" height="26" rx="4" fill="#60a5fa" stroke="#4a2c11" stroke-width="2"/><rect x="20" y="54" width="26" height="26" rx="4" fill="#60a5fa" stroke="#4a2c11" stroke-width="2"/><rect x="54" y="54" width="26" height="26" rx="4" fill="#f43f5e" stroke="#4a2c11" stroke-width="2"/></svg>`
         }
       },
       {
-        badge: "질문 5. 친구들 반응이 올 때",
-        titleLeft: "모든 댓글 칼답장",
-        titleRight: "하트만 누르고 눈팅",
+        badge: "질문 5. 친구들 반응 댓글이 올 때...",
+        leftTitle: "댓글 칼답장",
+        rightTitle: "하트만 살포시",
         choiceA: {
-          text: "댓글마다 정성 댓글 달기",
+          text: "댓글마다 정성 스피드 답글",
           score: { D: 1, S: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 20 30 Q 20 20 40 20 L 60 20 Q 80 20 80 40 Q 80 60 60 60 L 45 60 L 35 72 L 37 60 Q 20 60 20 30 Z" fill="#1eb980" stroke="#4a2c11" stroke-width="2.5"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><path d="M 20 25 H 80 V 60 H 45 L 30 75 V 60 H 20 Z" fill="#22c55e" stroke="#4a2c11" stroke-width="3"/><text x="50" y="47" text-anchor="middle" fill="#ffffff" font-weight="bold" font-size="20">RE</text></svg>`
         },
         choiceB: {
-          text: "하트만 가볍게 누르고 지나침",
+          text: "하트(좋아요)만 누르고 지나침",
           score: { C: 1, R: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 50 75 C 20 55 15 35 32 25 C 42 19 50 28 50 28 C 50 28 58 19 68 25 C 85 35 80 55 50 75 Z" fill="#e74c3c" stroke="#4a2c11" stroke-width="2.5"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><path d="M 50 75 C 20 50 20 30 38 25 C 48 22 50 32 50 32 C 50 32 52 22 62 25 C 80 30 80 50 50 75 Z" fill="#f43f5e" stroke="#4a2c11" stroke-width="3"/></svg>`
         }
       },
       {
-        badge: "질문 6. 지나간 옛날 피드를 볼 때",
-        titleLeft: "마음에 안 들면 보관",
-        titleRight: "다 추억이지 그대로 둠",
+        badge: "질문 6. 지나간 옛날 피드를 볼 때...",
+        leftTitle: "마음에 안 들면 보관",
+        rightTitle: "다 추억이지 그대로 둠",
         choiceA: {
-          text: "마음에 안 들면 즉시 보관",
+          text: "톤이 안 맞으면 즉시 보관함행!",
           score: { A: 1, R: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 25 30 L 75 30 L 70 75 L 30 75 Z" fill="#e2d2a4" stroke="#4a2c11" stroke-width="2.5"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><rect x="20" y="25" width="60" height="50" rx="6" fill="#eab308" stroke="#4a2c11" stroke-width="3"/><path d="M 35 45 L 50 60 L 65 45 M 50 25 V 58" stroke="#ffffff" stroke-width="4" fill="none"/></svg>`
         },
         choiceB: {
-          text: "이것도 다 추억이지! 그대로 둠",
+          text: "이것도 다 추억! 그대로 둔다",
           score: { N: 1, S: 1 },
-          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 30 25 L 70 25 L 75 75 L 25 75 Z" fill="#fffdf0" stroke="#4a2c11" stroke-width="2.5"/><path d="M 38 45 L 48 55 L 65 38" stroke="#1eb980" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`
+          svg: `<svg viewBox="0 0 100 100" class="w-14 h-14"><circle cx="50" cy="50" r="32" fill="#f97316" stroke="#4a2c11" stroke-width="3"/><path d="M 35 50 L 45 60 L 68 38" stroke="#ffffff" stroke-width="5" stroke-linecap="round" fill="none"/></svg>`
         }
       }
     ];
 
-    const resultTypes = {
+    const resultsMap = {
       spontaneous_art: {
-        subtitle: "당신은... 반전의 매력!",
-        title: "⚡ 재치 만점 '즉흥 벼락업로더'!",
+        title: "재치 만점 '즉흥 벼락업로더'!",
+        subTitle: "당신은... 반전의 매력!",
         tag: "즉흥적인 feed 업로더",
-        quote: "* 생각보다 행동이 먼저! 재밌는 건 지금 바로 올려야지!",
-        traits: [
-          "순발력과 재치로 기발한 게시물을 완성해요!",
-          "친구들과의 실시간 소통과 재미가 최우선!",
-          "가끔은 너무 즉흥적이라 나중에 슬그머니 보관함행...?"
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="50" r="28" fill="#fce0ca" stroke="#4a2c11" stroke-width="2"/><circle cx="68" cy="48" r="3" fill="#3a2312"/><circle cx="82" cy="48" r="3" fill="#3a2312"/><path d="M 70 58 Q 75 64 80 58 Z" fill="#e74c3c"/></svg>`
+        mbtiCode: "⚡ 재치 만점 '즉흥 벼락업로더'",
+        quote: "* 생각보다 행동이 먼저! 재미가 최우선!",
+        trait1: "💡 순발력과 재치로 기발한 업로드를 완성해요!",
+        trait2: "🎉 친구들과의 실시간 소통과 재미가 최우선!",
+        trait3: "⭐ 가끔 너무 즉흥이라 나중에 슬그머니 보관함행...?",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><circle cx="60" cy="60" r="45" fill="#fde047" stroke="#4a2c11" stroke-width="3"/><polygon points="60,20 70,45 95,45 74,60 82,85 60,70 38,85 46,60 25,45 50,45" fill="#f97316"/><circle cx="45" cy="55" r="5" fill="#3a2312"/><circle cx="75" cy="55" r="5" fill="#3a2312"/><path d="M 45 72 Q 60 85 75 72" stroke="#3a2312" stroke-width="3" fill="none"/></svg>`
       },
       restrained_art: {
-        subtitle: "당신은... 조용한 카리스마!",
-        title: "🎞️ 완벽주의 '감성 큐레이터'!",
+        title: "완벽주의 '감성 큐레이터'!",
+        subTitle: "당신은... 조용한 카리스마!",
         tag: "신중한 feed 업로더",
-        quote: "* 내 피드는 하나의 미술관! 3열 grid가 완벽해야 올려!",
-        traits: [
-          "미적 감각과 피드의 전체적인 톤앤매너를 중시해요.",
-          "사진 하나를 올리더라도 색감과 필터를 정성스럽게 정해요.",
-          "과도한 고민으로 업로드 타이밍을 놓칠 때도 있어요."
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><rect x="40" y="20" width="70" height="80" rx="4" fill="#ffffff" stroke="#4a2c11" stroke-width="2.5"/><rect x="46" y="26" width="58" height="50" fill="#69c0ec"/><circle cx="75" cy="45" r="10" fill="#f2ba2b"/></svg>`
+        mbtiCode: "🎞️ 완벽주의 '감성 큐레이터'",
+        quote: "* 내 피드는 미술관! 3열 grid가 완벽해야 올려!",
+        trait1: "💡 미적 감각과 피드의 전체적인 톤앤매너를 중시해요.",
+        trait2: "🎉 사진 하나를 올리더라도 색감과 필터를 정성스럽게 정해요.",
+        trait3: "⭐ 과도한 고민으로 업로드 타이밍을 놓칠 때도 있어요.",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><rect x="25" y="25" width="70" height="70" rx="12" fill="#a855f7" stroke="#4a2c11" stroke-width="3"/><circle cx="60" cy="60" r="22" fill="#ffffff" stroke="#4a2c11" stroke-width="3"/><circle cx="60" cy="60" r="10" fill="#a855f7"/><rect x="75" y="32" width="10" height="10" rx="2" fill="#fde047"/></svg>`
       },
       natural_spontaneous: {
-        subtitle: "당신은... 친근함 200%!",
-        title: "☕ 소소한 '일상 기록가'!",
+        title: "소소한 '일상 기록가'!",
+        subTitle: "당신은... 친근함 200%!",
         tag: "일상 밀착형 feed 업로더",
-        quote: "* 솔직하고 편안한 내 일상이 가장 유일무이한 콘텐츠!",
-        traits: [
-          "과한 보정 없이 내추럴하고 따뜻한 일상을 공유해요.",
-          "팔로워들과 친구처럼 친근하고 부담 없이 소통해요.",
-          "24시간 사라지는 스토리 기능도 아주 적극적으로 활용!"
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="60" r="35" fill="#fce0ca" stroke="#4a2c11" stroke-width="2"/><circle cx="65" cy="60" r="3" fill="#3a2312"/><circle cx="85" cy="60" r="3" fill="#3a2312"/></svg>`
+        mbtiCode: "☕ 소소한 '일상 기록가'",
+        quote: "* 편안한 내 일상이 가장 유일무이한 콘텐츠!",
+        trait1: "💡 과한 보정 없이 내추럴하고 따뜻한 일상을 공유해요.",
+        trait2: "🎉 팔로워들과 친구처럼 친근하고 부담 없이 소통해요.",
+        trait3: "⭐ 24시간 사라지는 스토리 기능도 아주 알차게 활용!",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><circle cx="60" cy="60" r="45" fill="#4ade80" stroke="#4a2c11" stroke-width="3"/><path d="M 40 45 Q 60 25 80 45" stroke="#166534" stroke-width="4" fill="none"/><circle cx="45" cy="58" r="4" fill="#3a2312"/><circle cx="75" cy="58" r="4" fill="#3a2312"/><path d="M 45 72 Q 60 82 75 72" stroke="#3a2312" stroke-width="3" fill="none"/></svg>`
       },
       detailed_storyteller: {
-        subtitle: "당신은... 감성 가득한 작가님!",
-        title: "📖 정성 가득 'TMI 스토리텔러'!",
+        title: "정성 가득 'TMI 스토리텔러'!",
+        subTitle: "당신은... 감성 가득한 작가님!",
         tag: "스토리텔러 feed 업로더",
+        mbtiCode: "📖 정성 가득 'TMI 스토리텔러'",
         quote: "* 글 한 줄에도 당시의 진심과 추억을 가득 담아!",
-        traits: [
-          "사진과 함께 정성스러운 장문의 글로 당시의 순간을 기록해요.",
-          "훗날 내 피드를 다시 돌아보며 추억 여행하는 것을 즐겨요.",
-          "댓글 소통에 진심이며 따뜻한 답글을 남겨요."
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><path d="M 35 20 L 115 20 L 110 100 L 30 100 Z" fill="#fffdf0" stroke="#4a2c11" stroke-width="2.5"/><path d="M 45 35 L 100 35 M 45 48 L 100 48 M 45 61 L 90 61" stroke="#4a2c11" stroke-width="2.5" stroke-linecap="round"/></svg>`
+        trait1: "💡 사진과 함께 정성스러운 장문의 글로 당시의 순간을 기록해요.",
+        trait2: "🎉 훗날 내 피드를 다시 돌아보며 추억 여행하는 것을 즐겨요.",
+        trait3: "⭐ 댓글 소통에 진심이며 따뜻한 답글을 남깁니다.",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><rect x="25" y="20" width="70" height="80" rx="10" fill="#fff7ed" stroke="#4a2c11" stroke-width="3"/><line x1="38" y1="38" x2="82" y2="38" stroke="#ea580c" stroke-width="4"/><line x1="38" y1="52" x2="82" y2="52" stroke="#ea580c" stroke-width="4"/><line x1="38" y1="66" x2="82" y2="66" stroke="#ea580c" stroke-width="4"/></svg>`
       },
       silent_observer: {
-        subtitle: "당신은... 숨은 알짜배기 관찰자!",
-        title: "👀 조용한 정보통 '프로 눈팅러'!",
+        title: "조용한 정보통 '프로 눈팅러'!",
+        subTitle: "당신은... 숨은 알짜배기 관찰자!",
         tag: "관찰형 feed 사용자",
-        quote: "* 업로드는 수줍지만, 친구들의 근황은 전부 꿰뚫고 있지!",
-        traits: [
-          "직접 게시물을 올리기보단 친구들 피드를 구경하는 걸 좋아해요.",
-          "하트 좋아요 누르기로 존재감을 표시하는 수줍은 소통가!",
-          "스토리 확인 속도는 누구보다 빠른 5G급 반응속도!"
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="60" r="32" fill="#fffdf0" stroke="#4a2c11" stroke-width="3"/><circle cx="62" cy="58" r="8" fill="#3a2312"/><circle cx="88" cy="58" r="8" fill="#3a2312"/><circle cx="64" cy="56" r="3" fill="#ffffff"/><circle cx="90" cy="56" r="3" fill="#ffffff"/><path d="M 50 78 Q 75 90 100 78" stroke="#1eb980" stroke-width="3" fill="none"/></svg>`
+        mbtiCode: "👀 조용한 정보통 '프로 눈팅러'",
+        quote: "* 업로드는 수줍지만, 친구들 근황은 전부 알고 있지!",
+        trait1: "💡 직접 게시물을 올리기보단 친구들 피드를 구경하는 걸 선호해요.",
+        trait2: "🎉 하트 좋아요 클릭으로 존재감을 표시하는 수줍은 소통가!",
+        trait3: "⭐ 스토리 확인 속도는 누구보다 빠른 5G급 반응속도!",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><ellipse cx="60" cy="60" rx="45" ry="30" fill="#ffffff" stroke="#4a2c11" stroke-width="3"/><circle cx="60" cy="60" r="18" fill="#38bdf8"/><circle cx="60" cy="60" r="8" fill="#0369a1"/><circle cx="55" cy="55" r="3" fill="#ffffff"/></svg>`
       },
       digital_archiver: {
-        subtitle: "당신은... 철저한 컬렉터!",
-        title: "📦 추억 박물관 관장 '디지털 아카이버'!",
+        title: "추억 박물관 관장 '디지털 아카이버'!",
+        subTitle: "당신은... 철저한 컬렉터!",
         tag: "아카이빙형 feed 업로더",
+        mbtiCode: "📦 추억 박물관 관장 '디지털 아카이버'",
         quote: "* 내 피드는 지나온 날들의 소중한 보물창고!",
-        traits: [
-          "카테고리별 스토리 하이라이트 정리가 취미이자 특기!",
-          "여행, 맛집, 일상별로 앨범 정리하듯 깔끔하게 보존해요.",
-          "남에게 보여주는 용도보다 '나만의 기록'에 의미를 둡니다."
-        ],
-        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><rect x="30" y="30" width="90" height="65" rx="6" fill="#e2d2a4" stroke="#4a2c11" stroke-width="3"/><path d="M 25 30 L 125 30 L 115 18 L 35 18 Z" fill="#6e4624" stroke="#4a2c11" stroke-width="2.5"/><circle cx="75" cy="60" r="10" fill="#f2ba2b" stroke="#4a2c11" stroke-width="2"/></svg>`
+        trait1: "💡 카테고리별 스토리 하이라이트 정리가 취미이자 특기!",
+        trait2: "🎉 여행, 맛집, 일상별로 앨범 정리하듯 깔끔하게 보존해요.",
+        trait3: "⭐ 남에게 보여주는 용도보다 '나만의 기록'에 큰 의미를 둡니다.",
+        svg: `<svg viewBox="0 0 120 120" class="w-full h-full"><rect x="25" y="30" width="70" height="60" rx="8" fill="#d97706" stroke="#4a2c11" stroke-width="3"/><path d="M 25 45 L 60 62 L 95 45" stroke="#4a2c11" stroke-width="3" fill="none"/></svg>`
       }
     };
 
-    let currentQuestionIndex = 0;
-    let scores = { R: 0, S: 0, A: 0, N: 0, C: 0, D: 0 };
+    let ADMIN_PIN = "1234";
+    window.isAdminAuthenticated = false;
+    let currentStep = 0;
+    let userScores = { S: 0, R: 0, A: 0, N: 0, C: 0, D: 0 };
+    let finalResultData = null;
+    let currentSelectedAppId = null;
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      });
+
+      const tabs = ['test', 'form', 'responses'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabName) {
+          btn.className = "flex-1 py-2 rounded-full text-xs sm:text-sm font-black transition-all bg-amber-950 text-amber-100 border-2 border-amber-950 shadow";
+        } else {
+          btn.className = "flex-1 py-2 rounded-full text-xs sm:text-sm font-black transition-all bg-amber-100/90 text-amber-950 border-2 border-amber-950 shadow hover:bg-amber-200 flex items-center justify-center gap-1";
+        }
+      });
+
+      if (tabName === 'test') {
+        const el = document.getElementById('start-screen');
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+      } else if (tabName === 'form') {
+        const el = document.getElementById('form-screen');
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+      } else if (tabName === 'responses') {
+        if (!window.isAdminAuthenticated) {
+          document.getElementById('pin-modal').classList.remove('hidden');
+          document.getElementById('pin-input').value = '';
+          document.getElementById('pin-error').classList.add('hidden');
+          document.getElementById('pin-input').focus();
+          // Fallback view under modal
+          const el = document.getElementById('start-screen');
+          el.classList.remove('hidden');
+          el.classList.add('flex');
+        } else {
+          const el = document.getElementById('responses-screen');
+          el.classList.remove('hidden');
+          el.classList.add('flex');
+          renderResponsesList();
+          updateStatsUI();
+        }
+      }
+    }
+
+    function handlePinSubmit(e) {
+      e.preventDefault();
+      const pin = document.getElementById('pin-input').value.trim();
+      if (pin === ADMIN_PIN) {
+        window.isAdminAuthenticated = true;
+        document.getElementById('pin-modal').classList.add('hidden');
+        
+        document.querySelectorAll('.tab-content').forEach(el => {
+          el.classList.add('hidden');
+          el.classList.remove('flex');
+        });
+
+        const respScreen = document.getElementById('responses-screen');
+        respScreen.classList.remove('hidden');
+        respScreen.classList.add('flex');
+
+        showToast("🔓 관리자 인증 성공!");
+        renderResponsesList();
+        updateStatsUI();
+      } else {
+        document.getElementById('pin-error').classList.remove('hidden');
+      }
+    }
+
+    function cancelPinAuth() {
+      document.getElementById('pin-modal').classList.add('hidden');
+      switchTab('test');
+    }
+
+    function lockAdminSession() {
+      window.isAdminAuthenticated = false;
+      showToast("🔒 응답함이 잠겼습니다.");
+      switchTab('test');
+    }
+
+    function updateStatsUI() {
+      const testCount = window.getTestCount ? window.getTestCount() : 0;
+      const apps = window.getApplications ? window.getApplications() : [];
+      const appCount = apps.length;
+
+      document.getElementById('stat-test-count').textContent = `${testCount}회`;
+      document.getElementById('stat-app-count').textContent = `${appCount}건`;
+
+      const conversion = testCount > 0 ? ((appCount / testCount) * 100).toFixed(1) : "0.0";
+      document.getElementById('stat-conversion').textContent = `${conversion}%`;
+    }
 
     function startTest() {
-      currentQuestionIndex = 0;
-      scores = { R: 0, S: 0, A: 0, N: 0, C: 0, D: 0 };
-
-      document.getElementById("start-screen").classList.add("hidden");
-      document.getElementById("start-screen").classList.remove("flex");
-
-      document.getElementById("result-screen").classList.add("hidden");
-      document.getElementById("result-screen").classList.remove("flex");
-
-      document.getElementById("question-screen").classList.remove("hidden");
-      document.getElementById("question-screen").classList.add("flex");
-
+      currentStep = 0;
+      userScores = { S: 0, R: 0, A: 0, N: 0, C: 0, D: 0 };
+      
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('flex');
+      
+      const qScreen = document.getElementById('question-screen');
+      qScreen.classList.remove('hidden');
+      qScreen.classList.add('flex');
+      
       renderQuestion();
     }
 
     function renderQuestion() {
-      const q = questions[currentQuestionIndex];
-      
-      document.getElementById("question-badge").innerText = q.badge;
-      document.getElementById("title-left").innerText = q.titleLeft;
-      document.getElementById("title-right").innerText = q.titleRight;
+      const q = questions[currentStep];
+      document.getElementById('question-badge').textContent = q.badge;
+      document.getElementById('progress-bar').style.width = `${((currentStep + 1) / questions.length) * 100}%`;
+      document.getElementById('progress-text').textContent = `${currentStep + 1} / ${questions.length}`;
 
-      document.getElementById("choice-a-text").innerText = q.choiceA.text;
-      document.getElementById("choice-a-img").innerHTML = q.choiceA.svg;
+      document.getElementById('title-left').textContent = q.leftTitle;
+      document.getElementById('title-right').textContent = q.rightTitle;
 
-      document.getElementById("choice-b-text").innerText = q.choiceB.text;
-      document.getElementById("choice-b-img").innerHTML = q.choiceB.svg;
+      document.getElementById('choice-a-text').textContent = q.choiceA.text;
+      document.getElementById('choice-a-img').innerHTML = q.choiceA.svg;
 
-      const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
-      document.getElementById("progress-bar").style.width = `${progressPercent}%`;
-      document.getElementById("progress-text").innerText = `${currentQuestionIndex + 1} / ${questions.length}`;
+      document.getElementById('choice-b-text').textContent = q.choiceB.text;
+      document.getElementById('choice-b-img').innerHTML = q.choiceB.svg;
     }
 
-    function selectChoice(type) {
-      const q = questions[currentQuestionIndex];
-      const selectedChoice = type === 'A' ? q.choiceA : q.choiceB;
+    function selectChoice(option) {
+      const q = questions[currentStep];
+      const selected = option === 'A' ? q.choiceA : q.choiceB;
 
-      for (const [key, val] of Object.entries(selectedChoice.score)) {
-        scores[key] = (scores[key] || 0) + val;
+      for (let key in selected.score) {
+        userScores[key] = (userScores[key] || 0) + selected.score[key];
       }
 
-      currentQuestionIndex++;
-
-      if (currentQuestionIndex < questions.length) {
+      currentStep++;
+      if (currentStep < questions.length) {
         renderQuestion();
       } else {
-        finishTest();
+        calculateAndShowResult();
       }
     }
 
-    function finishTest() {
-      document.getElementById("question-screen").classList.add("hidden");
-      document.getElementById("question-screen").classList.remove("flex");
+    function calculateAndShowResult() {
+      document.getElementById('question-screen').classList.add('hidden');
+      document.getElementById('question-screen').classList.remove('flex');
 
-      document.getElementById("loading-screen").classList.remove("hidden");
-      document.getElementById("loading-screen").classList.add("flex");
+      const loadingScreen = document.getElementById('loading-screen');
+      loadingScreen.classList.remove('hidden');
+      loadingScreen.classList.add('flex');
+
+      // Record test completion counter in background
+      if (window.recordTestCompletion) {
+        window.recordTestCompletion();
+      }
 
       setTimeout(() => {
-        document.getElementById("loading-screen").classList.add("hidden");
-        document.getElementById("loading-screen").classList.remove("flex");
+        loadingScreen.classList.add('hidden');
+        loadingScreen.classList.remove('flex');
 
-        const resultKey = calculateResultKey();
-        displayResult(resultKey);
+        const { S, R, A, N, C, D } = userScores;
+        let personaKey = "detailed_storyteller";
+
+        if (R > S && C > D && N >= A) {
+          personaKey = "silent_observer";
+        } else if (R > S && A >= N && D >= C) {
+          personaKey = "digital_archiver";
+        } else if (R > S && A >= N) {
+          personaKey = "restrained_art";
+        } else if (S >= R && A >= N) {
+          personaKey = "spontaneous_art";
+        } else if (S >= R && N > A) {
+          personaKey = "natural_spontaneous";
+        }
+
+        finalResultData = resultsMap[personaKey];
+
+        // Render Result UI
+        document.getElementById('result-subtitle').textContent = finalResultData.subTitle;
+        document.getElementById('result-title').textContent = finalResultData.title;
+        document.getElementById('result-tag').textContent = finalResultData.tag;
+        document.getElementById('result-quote').textContent = finalResultData.quote;
+        document.getElementById('result-illustration').innerHTML = finalResultData.svg;
+
+        document.getElementById('trait-1').children[1].textContent = finalResultData.trait1;
+        document.getElementById('trait-2').children[1].textContent = finalResultData.trait2;
+        document.getElementById('trait-3').children[1].textContent = finalResultData.trait3;
+
+        // Auto pre-select MBTI in form
+        document.getElementById('app-mbti').value = finalResultData.mbtiCode;
+
+        const resScreen = document.getElementById('result-screen');
+        resScreen.classList.remove('hidden');
+        resScreen.classList.add('flex');
       }, 1000);
     }
 
-    function calculateResultKey() {
-      const isSpontaneous = scores.S >= scores.R;
-      const isArtistic = scores.A >= scores.N;
-      const isDetailed = scores.D >= scores.C;
-
-      // 6 types distribution logic
-      if (!isSpontaneous && scores.C > scores.D && scores.N >= scores.A) {
-        return 'silent_observer'; // 눈팅러
-      } else if (!isSpontaneous && isArtistic && isDetailed) {
-        return 'digital_archiver'; // 디지털 아카이버
-      } else if (isSpontaneous && isArtistic) {
-        return 'spontaneous_art';
-      } else if (!isSpontaneous && isArtistic) {
-        return 'restrained_art';
-      } else if (isSpontaneous && !isArtistic) {
-        return 'natural_spontaneous';
-      } else {
-        return 'detailed_storyteller';
-      }
-    }
-
-    function displayResult(key) {
-      document.getElementById("start-screen").classList.add("hidden");
-      document.getElementById("start-screen").classList.remove("flex");
-
-      document.getElementById("result-screen").classList.remove("hidden");
-      document.getElementById("result-screen").classList.add("flex");
-
-      const res = resultTypes[key] || resultTypes['spontaneous_art'];
-
-      document.getElementById("result-subtitle").innerText = res.subtitle;
-      document.getElementById("result-title").innerText = res.title;
-      document.getElementById("result-tag").innerText = res.tag;
-      document.getElementById("result-quote").innerText = res.quote;
-      document.getElementById("result-illustration").innerHTML = res.svg;
-
-      document.getElementById("trait-1").innerHTML = `<span>💡</span> <span>${res.traits[0]}</span>`;
-      document.getElementById("trait-2").innerHTML = `<span>🎉</span> <span>${res.traits[1]}</span>`;
-      document.getElementById("trait-3").innerHTML = `<span>⭐</span> <span>${res.traits[2]}</span>`;
-    }
-
     function restartTest() {
-      document.getElementById("result-screen").classList.add("hidden");
-      document.getElementById("result-screen").classList.remove("flex");
-
-      document.getElementById("start-screen").classList.remove("hidden");
-      document.getElementById("start-screen").classList.add("flex");
+      document.getElementById('result-screen').classList.add('hidden');
+      document.getElementById('result-screen').classList.remove('flex');
+      startTest();
     }
 
     function shareResult() {
-      const dummy = document.createElement('input');
-      document.body.appendChild(dummy);
-      dummy.value = window.location.href;
-      dummy.select();
-      document.execCommand('copy');
-      document.body.removeChild(dummy);
+      const textToCopy = `[피드 MBTI 결과]\n나의 유형: ${finalResultData.title}\n"${finalResultData.quote}"`;
+      
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      showToast("📋 결과가 복사되었습니다! 공유해보세요.");
+    }
 
-      const toast = document.getElementById("toast-message");
-      toast.classList.remove("opacity-0", "pointer-events-none");
-      toast.classList.add("opacity-100");
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('app-name').value.trim();
+      const contact = document.getElementById('app-contact').value.trim();
+      const sns = document.getElementById('app-sns').value.trim();
+      const mbti = document.getElementById('app-mbti').value;
+      const intro = document.getElementById('app-intro').value.trim();
+
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "제출 중... ⏳";
+
+      const formData = {
+        name,
+        contact,
+        sns,
+        mbti,
+        intro,
+        status: "대기중",
+        createdAt: Date.now(),
+        dateStr: new Date().toLocaleString('ko-KR')
+      };
+
+      const success = await window.saveApplicationToCloud(formData);
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = "<span>🚀</span> 정보 제출하기";
+
+      if (success) {
+        showToast("🎉 소중한 정보가 안전하게 전달되었습니다!");
+        document.getElementById('applicant-form').reset();
+      } else {
+        showToast("⚠️ 오류가 발생했습니다. 다시 시도해 주세요.");
+      }
+    }
+
+    function renderResponsesList() {
+      const container = document.getElementById('responses-list');
+      const countEl = document.getElementById('response-count');
+      const filterVal = document.getElementById('response-filter').value;
+
+      const allApps = window.getApplications ? window.getApplications() : [];
+      let filtered = allApps;
+      if (filterVal !== 'ALL') {
+        filtered = allApps.filter(a => a.status === filterVal);
+      }
+
+      countEl.textContent = `총 ${filtered.length}개의 제출 건`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-amber-800 space-y-1">
+            <p class="text-2xl">📥</p>
+            <p class="text-xs font-bold">제출된 정보가 없습니다.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(app => {
+        let statusBg = "bg-amber-100 text-amber-900 border-amber-400";
+        if (app.status === '미팅예정') statusBg = "bg-emerald-100 text-emerald-900 border-emerald-500";
+        if (app.status === '보류') statusBg = "bg-rose-100 text-rose-900 border-rose-400";
+
+        return `
+          <div onclick="openDetailModal('${app.id}')" class="bg-white border-2 border-amber-950 rounded-xl p-3 shadow-sm hover:shadow-md cursor-pointer transition-all space-y-1">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-amber-950 text-sm">${escapeHtml(app.name)}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusBg}">
+                ${app.status || '대기중'}
+              </span>
+            </div>
+            <p class="text-xs font-bold text-blue-800 break-all">📱 ${escapeHtml(app.sns)}</p>
+            <div class="flex items-center justify-between text-[10px] text-amber-800 font-bold pt-1 border-t border-amber-100">
+              <span class="text-emerald-800 truncate">${escapeHtml(app.mbti)}</span>
+              <span>${app.dateStr || ''}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterResponses() {
+      renderResponsesList();
+    }
+
+    function openDetailModal(id) {
+      const allApps = window.getApplications ? window.getApplications() : [];
+      const app = allApps.find(a => a.id === id);
+      if (!app) return;
+
+      currentSelectedAppId = id;
+      document.getElementById('detail-name').textContent = app.name;
+      document.getElementById('detail-contact').textContent = app.contact;
+      document.getElementById('detail-sns').textContent = app.sns;
+      document.getElementById('detail-mbti').textContent = app.mbti;
+      document.getElementById('detail-intro').textContent = app.intro;
+      document.getElementById('detail-date').textContent = app.dateStr || '';
+
+      const badge = document.getElementById('detail-status-badge');
+      badge.textContent = app.status || '대기중';
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+      currentSelectedAppId = null;
+    }
+
+    async function updateApplicantStatus(newStatus) {
+      if (!currentSelectedAppId) return;
+      await window.updateStatusInCloud(currentSelectedAppId, newStatus);
+      document.getElementById('detail-status-badge').textContent = newStatus;
+      showToast(`상태가 '${newStatus}'(으)로 변경되었습니다.`);
+    }
+
+    async function deleteApplicant() {
+      if (!currentSelectedAppId) return;
+      await window.deleteAppFromCloud(currentSelectedAppId);
+      closeDetailModal();
+      showToast("🗑️ 데이터가 삭제되었습니다.");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      document.getElementById('toast-text').textContent = msg;
+      toast.classList.remove('translate-y-16', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
       setTimeout(() => {
-        toast.classList.remove("opacity-100");
-        toast.classList.add("opacity-0", "pointer-events-none");
-      }, 2000);
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-16', 'opacity-0');
+      }, 2500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
   </script>
 </body>
