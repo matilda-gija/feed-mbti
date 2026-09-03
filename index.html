@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>피드 MBTI - 나의 피드 타입은?</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua & Gamja Flower -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Jua', sans-serif;
+      background-color: #b08155;
+      background-image: 
+        radial-gradient(#8c6139 15%, transparent 16%),
+        radial-gradient(#8c6139 15%, transparent 16%);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    .handwriting {
+      font-family: 'Gamja Flower', cursive;
+    }
+
+    /* Notebook Frame Style */
+    .notebook-border {
+      background-color: #7a4e28;
+      border: 4px solid #3d230f;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .notebook-paper {
+      background-color: #fffceb;
+      border: 3.5px solid #3d230f;
+      border-radius: 18px;
+      position: relative;
+    }
+
+    /* Left Ring Binder Strip */
+    .ring-strip {
+      position: absolute;
+      left: -22px;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 30px 0;
+      z-index: 30;
+    }
+
+    .ring {
+      width: 36px;
+      height: 18px;
+      background: linear-gradient(180deg, #d8d8d8 0%, #707070 50%, #303030 100%);
+      border-radius: 10px;
+      box-shadow: 2px 4px 5px rgba(0,0,0,0.5);
+      border: 1.5px solid #202020;
+    }
+
+    .ring-hole {
+      width: 14px;
+      height: 14px;
+      background-color: #3d230f;
+      border-radius: 50%;
+      position: absolute;
+      left: 6px;
+      box-shadow: inset 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Pill Badges */
+    .badge-top {
+      background-color: #e8d7b8;
+      color: #3d230f;
+      border: 2px solid #3d230f;
+      border-radius: 20px;
+      padding: 4px 18px;
+      font-size: 1rem;
+      box-shadow: 0 2px 0 #3d230f;
+    }
+
+    .btn-brown {
+      background: linear-gradient(180deg, #603a1a 0%, #3d230f 100%);
+      color: #fffceb;
+      border: 2.5px solid #241205;
+      border-radius: 25px;
+      box-shadow: 0 4px 0 #241205;
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .btn-brown:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #241205;
+    }
+
+    /* Polaroid Choice Cards */
+    .polaroid-card {
+      background-color: #ffffff;
+      border: 3px solid #3d230f;
+      border-radius: 16px;
+      box-shadow: 0 5px 0 #3d230f;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .polaroid-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 0 #3d230f;
+    }
+
+    /* Title MBTI Colors */
+    .title-mbti {
+      font-size: 3.8rem;
+      line-height: 0.9;
+      font-weight: 900;
+      letter-spacing: -2px;
+      text-shadow: 3px 3px 0px #3d230f, -2px -2px 0 #3d230f, 2px -2px 0 #3d230f, -2px 2px 0 #3d230f;
+    }
+    .m-yellow { color: #f2ba2b; }
+    .m-pink { color: #f28282; }
+    .m-teal { color: #5bc0be; }
+    .m-blue { color: #69c0ec; }
+
+    .feed-logo {
+      background-color: #2ed573;
+      color: #ffffff;
+      border: 3px solid #106b49;
+      text-shadow: 2px 2px 0 #106b49;
+      box-shadow: 0 3px 0 #106b49;
+      transform: rotate(-3deg);
+    }
+
+    .or-badge {
+      background-color: #2ed573;
+      color: #ffffff;
+      border: 2px solid #106b49;
+      text-shadow: 1px 1px 0 #106b49;
+      box-shadow: 0 2px 0 #106b49;
+    }
+
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(3px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-3 sm:p-6">
+
+  <!-- Outer Wooden/Leather Notebook Border -->
+  <div class="notebook-border w-full max-w-md my-auto">
+    
+    <!-- Inner Paper Container -->
+    <div class="notebook-paper w-full min-h-[620px] p-4 pt-6 pb-5 flex flex-col justify-between relative overflow-hidden">
+      
+      <!-- Left Ring Binder Coils -->
+      <div class="ring-strip">
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+        <div class="relative flex items-center"><div class="ring-hole"></div><div class="ring"></div></div>
+      </div>
+
+      <!-- ================= 1. START SCREEN ================= -->
+      <div id="start-screen" class="flex flex-col items-center justify-between text-center h-full flex-1 pt-1">
+        
+        <div class="space-y-2 w-full flex flex-col items-center">
+          <!-- Top Badge -->
+          <span class="badge-top font-bold inline-block">재미로 보는 간이 테스트</span>
+          
+          <!-- Logo Area -->
+          <div class="relative my-2">
+            <div class="inline-block feed-logo text-2xl px-5 py-1 rounded-full font-black tracking-wide">
+              피드
+            </div>
+            <div class="title-mbti mt-1">
+              <span class="m-yellow">M</span><span class="m-pink">B</span><span class="m-teal">T</span><span class="m-blue">I</span>
+            </div>
+          </div>
+
+          <!-- Main Character SVG (Cute Girl with Red Bow Ribbon) -->
+          <div class="relative w-44 h-44 mx-auto my-1 flex items-center justify-center">
+            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+              <!-- Girl Hair Back -->
+              <path d="M 50 110 Q 50 50 100 50 Q 150 50 150 110 L 150 135 C 150 145 138 145 138 135 L 138 110 Q 100 120 62 110 L 62 135 C 62 145 50 145 50 135 Z" fill="#3d230f"/>
+              <!-- Face -->
+              <circle cx="100" cy="115" r="42" fill="#fedac2" stroke="#3d230f" stroke-width="3"/>
+              <!-- Girl Bangs -->
+              <path d="M 58 100 Q 100 112 142 100 Q 145 70 100 68 Q 55 70 58 100 Z" fill="#3d230f" stroke="#3d230f" stroke-width="1"/>
+              <!-- Red Bow Ribbon on Top -->
+              <path d="M 72 58 C 55 42 55 68 82 66 Z" fill="#e74c3c" stroke="#3d230f" stroke-width="2.5"/>
+              <path d="M 128 58 C 145 42 145 68 118 66 Z" fill="#e74c3c" stroke="#3d230f" stroke-width="2.5"/>
+              <circle cx="100" cy="65" r="8" fill="#c0392b" stroke="#3d230f" stroke-width="2"/>
+              <!-- Eyes -->
+              <ellipse cx="82" cy="114" rx="4" ry="6" fill="#3d230f"/>
+              <ellipse cx="118" cy="114" rx="4" ry="6" fill="#3d230f"/>
+              <!-- Blush Circles -->
+              <circle cx="74" cy="122" r="7" fill="#f8a5c2" opacity="0.8"/>
+              <circle cx="126" cy="122" r="7" fill="#f8a5c2" opacity="0.8"/>
+              <!-- Smile Mouth -->
+              <path d="M 91 123 Q 100 134 109 123 Z" fill="#e74c3c" stroke="#3d230f" stroke-width="2"/>
+              <!-- Yellow Clothes Body -->
+              <path d="M 65 152 Q 100 140 135 152 L 142 195 L 58 195 Z" fill="#f2ba2b" stroke="#3d230f" stroke-width="3"/>
+              <!-- Pink Collar/Accents -->
+              <path d="M 82 152 Q 100 162 118 152 L 112 195 L 88 195 Z" fill="#f28282" stroke="#3d230f" stroke-width="2"/>
+              <!-- Hands holding -->
+              <circle cx="70" cy="165" r="7" fill="#fedac2" stroke="#3d230f" stroke-width="2"/>
+              <circle cx="130" cy="165" r="7" fill="#fedac2" stroke="#3d230f" stroke-width="2"/>
+            </svg>
+
+            <!-- Speech Bubble -->
+            <div class="absolute -right-2 top-2 bg-white border-2 border-amber-950 rounded-2xl px-2.5 py-1 text-xs handwriting text-amber-950 font-bold shadow-sm transform rotate-6">
+              나의 피드<br>궁금해?
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="w-full space-y-2 mt-2">
+          <button onclick="startTest()" class="btn-brown w-full py-3 text-2xl font-black tracking-wider shadow-md">
+            시작하기
+          </button>
+
+          <!-- 6 Types Quick Buttons -->
+          <div class="bg-amber-100/80 border-2 border-amber-900/30 rounded-xl p-2 text-left">
+            <p class="text-[11px] font-bold text-amber-950 mb-1 flex justify-between items-center">
+              <span>✨ 6가지 유형 빠른 예시보기</span>
+              <span class="text-[10px] bg-emerald-200 text-emerald-900 px-1.5 py-0.5 rounded border border-emerald-400">클릭</span>
+            </p>
+            <div class="grid grid-cols-2 gap-1 text-[11px] font-bold">
+              <button onclick="previewSpecificResult('spontaneous_art')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">⚡ 1. 즉흥러</button>
+              <button onclick="previewSpecificResult('restrained_art')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">🎞️ 2. 신중러</button>
+              <button onclick="previewSpecificResult('natural_spontaneous')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">☕ 3. 일상 기록가</button>
+              <button onclick="previewSpecificResult('detailed_storyteller')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">📖 4. TMI 스토리텔러</button>
+              <button onclick="previewSpecificResult('silent_observer')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">👀 5. 프로 눈팅러 [NEW]</button>
+              <button onclick="previewSpecificResult('digital_archiver')" class="bg-white hover:bg-amber-200 p-1 rounded border border-amber-900/30 text-left truncate">📦 6. 디지털 아카이버 [NEW]</button>
+            </div>
+          </div>
+
+          <button onclick="openExamplesModal()" class="w-full py-1.5 bg-amber-200/90 hover:bg-amber-300 text-amber-950 rounded-full text-xs font-bold border-2 border-amber-900/40">
+            👀 전체 유형 카피 상세 모음창
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 2. QUESTION SCREEN ================= -->
+      <div id="question-screen" class="hidden flex-col justify-between h-full flex-1 relative">
+        <div>
+          <!-- Top Badge -->
+          <div class="text-center mb-2">
+            <span id="question-badge" class="badge-top font-bold text-xs inline-block">사진을 올리기 전...</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="flex items-center gap-2 mb-3">
+            <div class="flex-1 bg-amber-200/80 h-3 rounded-full overflow-hidden border-2 border-amber-900">
+              <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-300" style="width: 16.6%;"></div>
+            </div>
+            <span id="progress-text" class="text-amber-950 font-black text-xs">1 / 6</span>
+          </div>
+
+          <!-- Main Question Title -->
+          <div class="text-center mb-3">
+            <h2 id="question-title-wrapper" class="text-lg sm:text-xl font-black text-amber-950 leading-snug flex items-center justify-center flex-wrap gap-1">
+              <span id="title-left">고민 고민한다</span>
+              <span class="or-badge text-xs px-2 py-0.5 rounded-full font-extrabold transform -rotate-3 inline-block">OR</span>
+              <span id="title-right">바로 올린다</span>
+            </h2>
+          </div>
+
+          <!-- Choice Cards (Polaroid Style) -->
+          <div class="grid grid-cols-2 gap-3 mb-2">
+            <!-- Choice A -->
+            <div onclick="selectChoice('A')" class="polaroid-card p-2 flex flex-col items-center cursor-pointer text-center group">
+              <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-1 mb-2 shadow-inner">
+                <div id="choice-a-img" class="w-full h-full flex items-center justify-center">
+                  <!-- SVG Illustration -->
+                </div>
+              </div>
+              <div class="border-2 border-amber-950 rounded-full px-3 py-1 bg-amber-100 text-amber-950 text-xs font-black shadow-sm">
+                <span id="choice-a-text">신중하게</span>
+              </div>
+            </div>
+
+            <!-- Choice B -->
+            <div onclick="selectChoice('B')" class="polaroid-card p-2 flex flex-col items-center cursor-pointer text-center group">
+              <div class="w-full aspect-square rounded-xl bg-amber-50 border-2 border-amber-900/20 overflow-hidden flex items-center justify-center p-1 mb-2 shadow-inner">
+                <div id="choice-b-img" class="w-full h-full flex items-center justify-center">
+                  <!-- SVG Illustration -->
+                </div>
+              </div>
+              <div class="border-2 border-amber-950 rounded-full px-3 py-1 bg-amber-100 text-amber-950 text-xs font-black shadow-sm">
+                <span id="choice-b-text">그냥 휙!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Pig Mascot & Guide -->
+        <div class="flex items-end justify-between border-t-2 border-amber-900/10 pt-2 relative mt-1">
+          <span class="text-xs handwriting text-amber-900 font-bold max-w-[210px] leading-tight pb-1">
+            * 둘 다 좋지만, 더 가까운 쪽을 골라봐!
+          </span>
+          
+          <!-- Pig Mascot with Graduation Cap -->
+          <div class="relative flex items-end">
+            <div class="w-16 h-16 relative transform translate-y-1">
+              <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+                <!-- Pig Face -->
+                <circle cx="50" cy="55" r="34" fill="#ffffff" stroke="#3d230f" stroke-width="3"/>
+                <!-- Ears -->
+                <polygon points="25,30 38,20 38,36" fill="#ffffff" stroke="#3d230f" stroke-width="2.5"/>
+                <polygon points="75,30 62,20 62,36" fill="#ffffff" stroke="#3d230f" stroke-width="2.5"/>
+                <!-- Snout -->
+                <ellipse cx="50" cy="62" rx="10" ry="7" fill="#ffbebe" stroke="#3d230f" stroke-width="2"/>
+                <circle cx="46" cy="62" r="1.8" fill="#3d230f"/>
+                <circle cx="54" cy="62" r="1.8" fill="#3d230f"/>
+                <!-- Wink Eyes -->
+                <path d="M 32 48 L 42 48" stroke="#3d230f" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="62" cy="48" r="3.5" fill="#3d230f"/>
+                <!-- Graduation Cap -->
+                <polygon points="50,12 80,25 50,35 20,25" fill="#3d230f"/>
+                <rect x="42" y="28" width="16" height="8" fill="#3d230f"/>
+                <path d="M 75 26 L 82 38" stroke="#e74c3c" stroke-width="2.5"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 3. LOADING SCREEN ================= -->
+      <div id="loading-screen" class="hidden flex-col items-center justify-center h-full flex-1 py-12 text-center">
+        <div class="w-20 h-20 mb-6 animate-bounce">
+          <svg viewBox="0 0 100 100" class="w-full h-full">
+            <rect x="15" y="20" width="70" height="60" rx="10" fill="#ffffff" stroke="#3d230f" stroke-width="4"/>
+            <circle cx="50" cy="50" r="18" fill="#2ed573" stroke="#3d230f" stroke-width="3"/>
+            <circle cx="50" cy="50" r="8" fill="#ffffff"/>
+            <circle cx="70" cy="32" r="4" fill="#e74c3c"/>
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-amber-950 mb-2">피드 분석 중... 🔍</h3>
+        <p class="text-sm handwriting text-amber-800">당신의 피드 스타일을 꼼꼼하게 분석하는 중입니다!</p>
+      </div>
+
+      <!-- ================= 4. RESULT SCREEN ================= -->
+      <div id="result-screen" class="hidden flex-col justify-between h-full flex-1">
+        <div class="text-center space-y-1.5">
+          <span id="result-subtitle" class="text-amber-900 font-bold text-xs leading-tight block">
+            당신은... 반전의 매력!
+          </span>
+          
+          <h1 id="result-title" class="text-2xl sm:text-3xl font-black text-amber-950 leading-tight">
+            재치 만점 '즉흥러'!
+          </h1>
+
+          <div class="bg-amber-100 border-2 border-amber-900/30 rounded-xl px-3 py-0.5 text-xs font-black text-amber-950 inline-block shadow-sm">
+            <span id="result-tag" class="text-emerald-800">[ 결과: 즉흥적인 feed 업로더 ]</span>
+          </div>
+
+          <!-- Result Illustration Card -->
+          <div class="bg-white border-2 border-amber-950 rounded-2xl p-2.5 shadow-md mx-auto max-w-[280px] mt-1">
+            <div id="result-illustration" class="w-full h-32 rounded-xl bg-amber-50 border border-amber-900/20 flex items-center justify-center p-2 mb-1.5 shadow-inner">
+              <!-- Dynamic Result SVG -->
+            </div>
+            <p id="result-quote" class="text-xs handwriting text-amber-900 font-bold">
+              * 생각보다 행동이 먼저! 재밌는 건 바로 올려야지!
+            </p>
+          </div>
+
+          <!-- Trait Points -->
+          <div class="bg-white/90 border-2 border-amber-900/40 rounded-xl p-2.5 text-left text-xs text-amber-950 space-y-1 shadow-sm">
+            <p id="trait-1" class="font-bold flex items-start gap-1">
+              <span>💡</span> <span>순발력과 재치로 기발한 업로드!</span>
+            </p>
+            <p id="trait-2" class="font-bold flex items-start gap-1">
+              <span>🎉</span> <span>친구들과의 즐거움이 최우선!</span>
+            </p>
+            <p id="trait-3" class="font-bold flex items-start gap-1">
+              <span>⭐</span> <span>가끔은 너무 즉흥이라 나중에 후회할 수도...?</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t-2 border-amber-900/20">
+          <button onclick="restartTest()" class="btn-brown py-2.5 text-sm font-bold">
+            다시 테스트하기
+          </button>
+          <button onclick="shareResult()" class="btn-brown py-2.5 text-sm font-bold bg-amber-800">
+            공유하기
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= 5. EXAMPLES MODAL ================= -->
+  <div id="examples-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-backdrop">
+    <div class="bg-[#fffceb] border-4 border-amber-950 rounded-2xl p-4 w-full max-w-sm max-h-[85vh] overflow-y-auto flex flex-col justify-between shadow-2xl relative">
+      <div>
+        <div class="flex items-center justify-between border-b-2 border-amber-950/20 pb-2 mb-3">
+          <h3 class="font-black text-amber-950 text-base">💡 피드 MBTI 결과 6종 모음</h3>
+          <button onclick="closeExamplesModal()" class="text-amber-950 font-black text-xl hover:text-red-600 px-2">✕</button>
+        </div>
+        
+        <div class="space-y-2">
+          <!-- 1 -->
+          <div onclick="previewSpecificResult('spontaneous_art'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-amber-700">당신은... 반전의 매력!</div>
+            <div class="font-black text-amber-950 text-xs">⚡ 재치 만점 '즉흥러'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 생각보다 행동이 먼저! 재밌는 건 바로 올려야지!</p>
+          </div>
+          <!-- 2 -->
+          <div onclick="previewSpecificResult('restrained_art'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-amber-700">당신은... 조용한 카리스마!</div>
+            <div class="font-black text-amber-950 text-xs">🎞️ 완벽주의 '신중러'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 내 피드는 하나의 작품! 완벽해야 올려!</p>
+          </div>
+          <!-- 3 -->
+          <div onclick="previewSpecificResult('natural_spontaneous'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-amber-700">당신은... 친근함 200%!</div>
+            <div class="font-black text-amber-950 text-xs">☕ 소소한 '일상 기록가'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 편안한 내 일상이 가장 유일무이한 콘텐츠!</p>
+          </div>
+          <!-- 4 -->
+          <div onclick="previewSpecificResult('detailed_storyteller'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-amber-700">당신은... 감성 가득한 작가님!</div>
+            <div class="font-black text-amber-950 text-xs">📖 정성 가득 'TMI 스토리텔러'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 글 한 줄에도 당시의 진심과 추억을 가득 담아!</p>
+          </div>
+          <!-- 5 -->
+          <div onclick="previewSpecificResult('silent_observer'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-emerald-700">[신규] 숨은 알짜배기 관찰자!</div>
+            <div class="font-black text-amber-950 text-xs">👀 조용한 정보통 '프로 눈팅러'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 업로드는 수줍지만, 친구들 근황은 전부 꿰뚫고 있지!</p>
+          </div>
+          <!-- 6 -->
+          <div onclick="previewSpecificResult('digital_archiver'); closeExamplesModal();" class="bg-white border-2 border-amber-950 rounded-xl p-2 text-left shadow-sm cursor-pointer hover:bg-amber-100">
+            <div class="text-[10px] font-bold text-purple-700">[신규] 철저한 컬렉터!</div>
+            <div class="font-black text-amber-950 text-xs">📦 추억 박물관 관장 '디지털 아카이버'!</div>
+            <p class="text-[10px] handwriting text-amber-900 font-bold">* 내 피드는 지나온 날들의 소중한 보물창고!</p>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="closeExamplesModal()" class="btn-brown w-full py-2 rounded-xl font-bold mt-2 text-xs">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Message -->
+  <div id="toast-message" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-amber-950 text-amber-100 px-4 py-2 rounded-full text-xs font-bold shadow-lg opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    링크가 복사되었습니다! 🎉
+  </div>
+
+  <script>
+    const questions = [
+      {
+        badge: "질문 1. 사진을 올리기 전...",
+        titleLeft: "고민 고민한다",
+        titleRight: "바로 올린다",
+        choiceA: {
+          text: "신중하게",
+          score: { R: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="55" r="30" fill="#fedac2" stroke="#3d230f" stroke-width="2.5"/><path d="M 25 55 Q 25 25 50 25 Q 75 25 75 55 Z" fill="#3d230f"/><path d="M 38 32 C 28 20 28 40 45 38 Z" fill="#e74c3c"/><ellipse cx="42" cy="55" rx="3" ry="4" fill="#3d230f"/><ellipse cx="58" cy="55" rx="3" ry="4" fill="#3d230f"/><path d="M 45 68 Q 50 63 55 68" stroke="#3d230f" stroke-width="2" fill="none"/></svg>`
+        },
+        choiceB: {
+          text: "그냥 휙!",
+          score: { S: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="55" r="30" fill="#fedac2" stroke="#3d230f" stroke-width="2.5"/><path d="M 25 55 Q 25 25 50 25 Q 75 25 75 55 Z" fill="#3d230f"/><path d="M 38 32 C 28 20 28 40 45 38 Z" fill="#e74c3c"/><circle cx="40" cy="52" r="3" fill="#3d230f"/><circle cx="60" cy="52" r="3" fill="#3d230f"/><path d="M 43 64 Q 50 74 57 64 Z" fill="#e74c3c" stroke="#3d230f" stroke-width="1.5"/></svg>`
+        }
+      },
+      {
+        badge: "질문 2. 사진 보정 스타일에 대해...",
+        titleLeft: "색감 보정 필수",
+        titleRight: "원본 보정 없음",
+        choiceA: {
+          text: "필터/보정 필수",
+          score: { A: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="20" y="25" width="60" height="50" rx="6" fill="#69c0ec" stroke="#3d230f" stroke-width="2.5"/><circle cx="35" cy="40" r="6" fill="#f2ba2b"/></svg>`
+        },
+        choiceB: {
+          text: "원본 편안함",
+          score: { N: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="25" y="20" width="50" height="60" rx="4" fill="#ffffff" stroke="#3d230f" stroke-width="2.5"/><circle cx="50" cy="42" r="14" fill="#f8a5c2"/></svg>`
+        }
+      },
+      {
+        badge: "질문 3. 글 작성 코멘트 길이...",
+        titleLeft: "감성 한 줄 단문",
+        titleRight: "TMI 일기장 작성",
+        choiceA: {
+          text: "깔끔한 한 줄",
+          score: { C: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 30 35 L 70 35 M 30 50 L 55 50" stroke="#3d230f" stroke-width="4" stroke-linecap="round"/></svg>`
+        },
+        choiceB: {
+          text: "정성 TMI 글",
+          score: { D: 2 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="25" y="20" width="50" height="60" rx="4" fill="#ffffff" stroke="#3d230f" stroke-width="2.5"/><path d="M 32 32 L 68 32 M 32 42 L 68 42 M 32 52 L 68 52" stroke="#3d230f" stroke-width="2.5" stroke-linecap="round"/></svg>`
+        }
+      },
+      {
+        badge: "질문 4. 사진 올리는 주 공간은?",
+        titleLeft: "24시간 스토리",
+        titleRight: "박제되는 피드",
+        choiceA: {
+          text: "스토리 투척",
+          score: { S: 1, N: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><circle cx="50" cy="50" r="30" fill="none" stroke="#e84393" stroke-width="5" stroke-dasharray="6 3"/></svg>`
+        },
+        choiceB: {
+          text: "메인 피드 박제",
+          score: { R: 1, A: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><rect x="20" y="20" width="60" height="60" rx="6" fill="#ffffff" stroke="#3d230f" stroke-width="3"/></svg>`
+        }
+      },
+      {
+        badge: "질문 5. 친구들 반응이 올 때...",
+        titleLeft: "댓글 정성 칼답장",
+        titleRight: "하트만 가볍게 누름",
+        choiceA: {
+          text: "댓글 칼답장",
+          score: { D: 1, S: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 20 30 Q 20 20 40 20 L 60 20 Q 80 20 80 40 Q 80 60 60 60 L 45 60 L 35 72 L 37 60 Q 20 60 20 30 Z" fill="#2ed573" stroke="#3d230f" stroke-width="2.5"/></svg>`
+        },
+        choiceB: {
+          text: "하트만 누름",
+          score: { C: 1, R: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 50 75 C 20 55 15 35 32 25 C 42 19 50 28 50 28 C 50 28 58 19 68 25 C 85 35 80 55 50 75 Z" fill="#e74c3c" stroke="#3d230f" stroke-width="2.5"/></svg>`
+        }
+      },
+      {
+        badge: "질문 6. 지난 사진 정리할 때...",
+        titleLeft: "안 맞으면 보관함",
+        titleRight: "다 추억이지 냅둠",
+        choiceA: {
+          text: "즉시 보관함행",
+          score: { A: 1, R: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 25 30 L 75 30 L 70 75 L 30 75 Z" fill="#e2d2a4" stroke="#3d230f" stroke-width="2.5"/></svg>`
+        },
+        choiceB: {
+          text: "다 추억이지 냅둠",
+          score: { N: 1, S: 1 },
+          svg: `<svg viewBox="0 0 100 100" class="w-16 h-16"><path d="M 30 25 L 70 25 L 75 75 L 25 75 Z" fill="#fffdf0" stroke="#3d230f" stroke-width="2.5"/><path d="M 38 45 L 48 55 L 65 38" stroke="#2ed573" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`
+        }
+      }
+    ];
+
+    const resultTypes = {
+      spontaneous_art: {
+        subtitle: "당신은... 반전의 매력!",
+        title: "재치 만점 '즉흥러'!",
+        tag: "[ 결과: 즉흥적인 feed 업로더 ]",
+        quote: "* 생각보다 행동이 먼저! 재밌는 건 바로 올려야지!",
+        traits: [
+          "순발력과 재치로 기발한 업로드!",
+          "친구들과의 즐거움이 최우선!",
+          "가끔은 너무 즉흥이라 나중에 후회할 수도...?"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="50" r="28" fill="#fedac2" stroke="#3d230f" stroke-width="2"/><circle cx="68" cy="48" r="3" fill="#3d230f"/><circle cx="82" cy="48" r="3" fill="#3d230f"/><path d="M 70 58 Q 75 64 80 58 Z" fill="#e74c3c"/><path d="M 45 42 Q 75 20 105 42" stroke="#e74c3c" stroke-width="3" fill="none"/></svg>`
+      },
+      restrained_art: {
+        subtitle: "당신은... 조용한 카리스마!",
+        title: "완벽주의 '신중러'!",
+        tag: "[ 결과: 신중한 feed 업로더 ]",
+        quote: "* 내 피드는 하나의 작품! 완벽해야 올려!",
+        traits: [
+          "미적 감각과 완성도를 중요시!",
+          "올릴 사진을 고르고 또 골라요!",
+          "과도한 고민으로 업로드 시기를 놓칠 수도!"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><rect x="40" y="20" width="70" height="80" rx="4" fill="#ffffff" stroke="#3d230f" stroke-width="2.5"/><rect x="46" y="26" width="58" height="50" fill="#69c0ec"/><circle cx="75" cy="45" r="10" fill="#f2ba2b"/></svg>`
+      },
+      natural_spontaneous: {
+        subtitle: "당신은... 친근함 200%!",
+        title: "소소한 '일상 기록가'!",
+        tag: "[ 결과: 일상 밀착형 feed 업로더 ]",
+        quote: "* 편안한 내 일상이 가장 유일무이한 콘텐츠!",
+        traits: [
+          "과한 보정 없이 내추럴한 일상을 공유!",
+          "팔로워들과 친근하게 소통해요!",
+          "스토리 기능도 아주 알차게 활용!"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="60" r="35" fill="#fedac2" stroke="#3d230f" stroke-width="2"/><circle cx="65" cy="60" r="3" fill="#3d230f"/><circle cx="85" cy="60" r="3" fill="#3d230f"/></svg>`
+      },
+      detailed_storyteller: {
+        subtitle: "당신은... 감성 가득한 작가님!",
+        title: "정성 가득 'TMI 스토리텔러'!",
+        tag: "[ 결과: 스토리텔러 feed 업로더 ]",
+        quote: "* 글 한 줄에도 당시의 진심과 추억을 가득 담아!",
+        traits: [
+          "사진과 함께 정성 장문의 글 작성!",
+          "피드를 보며 지나온 추억 여행 즐김!",
+          "따뜻한 댓글 소통에 매우 진심!"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><path d="M 35 20 L 115 20 L 110 100 L 30 100 Z" fill="#fffceb" stroke="#3d230f" stroke-width="2.5"/><path d="M 45 35 L 100 35 M 45 48 L 100 48 M 45 61 L 90 61" stroke="#3d230f" stroke-width="2.5" stroke-linecap="round"/></svg>`
+      },
+      silent_observer: {
+        subtitle: "당신은... 숨은 알짜배기 관찰자!",
+        title: "조용한 정보통 '프로 눈팅러'!",
+        tag: "[ 결과: 관찰형 feed 사용자 ]",
+        quote: "* 업로드는 수줍지만, 친구들 근황은 전부 꿰뚫고 있지!",
+        traits: [
+          "직접 게시글을 올리기보다 피드 구경 선호!",
+          "하트 좋아요 클릭으로 존재감 표현!",
+          "스토리 확인 속도는 빛의 5G 속도!"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><circle cx="75" cy="60" r="32" fill="#fffdf0" stroke="#3d230f" stroke-width="3"/><circle cx="62" cy="58" r="8" fill="#3d230f"/><circle cx="88" cy="58" r="8" fill="#3d230f"/><path d="M 50 78 Q 75 90 100 78" stroke="#2ed573" stroke-width="3" fill="none"/></svg>`
+      },
+      digital_archiver: {
+        subtitle: "당신은... 철저한 컬렉터!",
+        title: "추억 박물관 관장 '디지털 아카이버'!",
+        tag: "[ 결과: 아카이빙형 feed 업로더 ]",
+        quote: "* 내 피드는 지나온 날들의 소중한 보물창고!",
+        traits: [
+          "카테고리별 하이라이트 정리 대마왕!",
+          "여행, 맛집, 일상별 앨범처럼 관리!",
+          "나만의 소중한 기록물에 가치 부여!"
+        ],
+        svg: `<svg viewBox="0 0 150 120" class="w-full h-full"><rect x="30" y="30" width="90" height="65" rx="6" fill="#e2d2a4" stroke="#3d230f" stroke-width="3"/><path d="M 25 30 L 125 30 L 115 18 L 35 18 Z" fill="#603a1a" stroke="#3d230f" stroke-width="2.5"/></svg>`
+      }
+    };
+
+    let currentQuestionIndex = 0;
+    let scores = { R: 0, S: 0, A: 0, N: 0, C: 0, D: 0 };
+
+    function startTest() {
+      currentQuestionIndex = 0;
+      scores = { R: 0, S: 0, A: 0, N: 0, C: 0, D: 0 };
+
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("start-screen").classList.remove("flex");
+
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("flex");
+
+      document.getElementById("question-screen").classList.remove("hidden");
+      document.getElementById("question-screen").classList.add("flex");
+
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQuestionIndex];
+      
+      document.getElementById("question-badge").innerText = q.badge;
+      document.getElementById("title-left").innerText = q.titleLeft;
+      document.getElementById("title-right").innerText = q.titleRight;
+
+      document.getElementById("choice-a-text").innerText = q.choiceA.text;
+      document.getElementById("choice-a-img").innerHTML = q.choiceA.svg;
+
+      document.getElementById("choice-b-text").innerText = q.choiceB.text;
+      document.getElementById("choice-b-img").innerHTML = q.choiceB.svg;
+
+      const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+      document.getElementById("progress-text").innerText = `${currentQuestionIndex + 1} / ${questions.length}`;
+    }
+
+    function selectChoice(type) {
+      const q = questions[currentQuestionIndex];
+      const selectedChoice = type === 'A' ? q.choiceA : q.choiceB;
+
+      for (const [key, val] of Object.entries(selectedChoice.score)) {
+        scores[key] = (scores[key] || 0) + val;
+      }
+
+      currentQuestionIndex++;
+
+      if (currentQuestionIndex < questions.length) {
+        renderQuestion();
+      } else {
+        finishTest();
+      }
+    }
+
+    function finishTest() {
+      document.getElementById("question-screen").classList.add("hidden");
+      document.getElementById("question-screen").classList.remove("flex");
+
+      document.getElementById("loading-screen").classList.remove("hidden");
+      document.getElementById("loading-screen").classList.add("flex");
+
+      setTimeout(() => {
+        document.getElementById("loading-screen").classList.add("hidden");
+        document.getElementById("loading-screen").classList.remove("flex");
+
+        const resultKey = calculateResultKey();
+        displayResult(resultKey);
+      }, 1000);
+    }
+
+    function calculateResultKey() {
+      const isSpontaneous = scores.S >= scores.R;
+      const isArtistic = scores.A >= scores.N;
+      const isDetailed = scores.D >= scores.C;
+
+      if (!isSpontaneous && scores.C > scores.D && scores.N >= scores.A) {
+        return 'silent_observer';
+      } else if (!isSpontaneous && isArtistic && isDetailed) {
+        return 'digital_archiver';
+      } else if (isSpontaneous && isArtistic) {
+        return 'spontaneous_art';
+      } else if (!isSpontaneous && isArtistic) {
+        return 'restrained_art';
+      } else if (isSpontaneous && !isArtistic) {
+        return 'natural_spontaneous';
+      } else {
+        return 'detailed_storyteller';
+      }
+    }
+
+    function displayResult(key) {
+      document.getElementById("start-screen").classList.add("hidden");
+      document.getElementById("start-screen").classList.remove("flex");
+
+      document.getElementById("result-screen").classList.remove("hidden");
+      document.getElementById("result-screen").classList.add("flex");
+
+      const res = resultTypes[key] || resultTypes['spontaneous_art'];
+
+      document.getElementById("result-subtitle").innerText = res.subtitle;
+      document.getElementById("result-title").innerText = res.title;
+      document.getElementById("result-tag").innerText = res.tag;
+      document.getElementById("result-quote").innerText = res.quote;
+      document.getElementById("result-illustration").innerHTML = res.svg;
+
+      document.getElementById("trait-1").innerHTML = `<span>💡</span> <span>${res.traits[0]}</span>`;
+      document.getElementById("trait-2").innerHTML = `<span>🎉</span> <span>${res.traits[1]}</span>`;
+      document.getElementById("trait-3").innerHTML = `<span>⭐</span> <span>${res.traits[2]}</span>`;
+    }
+
+    function previewSpecificResult(key) {
+      displayResult(key);
+    }
+
+    function restartTest() {
+      document.getElementById("result-screen").classList.add("hidden");
+      document.getElementById("result-screen").classList.remove("flex");
+
+      document.getElementById("start-screen").classList.remove("hidden");
+      document.getElementById("start-screen").classList.add("flex");
+    }
+
+    function shareResult() {
+      const dummy = document.createElement('input');
+      document.body.appendChild(dummy);
+      dummy.value = window.location.href;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+
+      const toast = document.getElementById("toast-message");
+      toast.classList.remove("opacity-0", "pointer-events-none");
+      toast.classList.add("opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("opacity-100");
+        toast.classList.add("opacity-0", "pointer-events-none");
+      }, 2000);
+    }
+
+    function openExamplesModal() {
+      const modal = document.getElementById("examples-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeExamplesModal() {
+      const modal = document.getElementById("examples-modal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+  </script>
+</body>
+</html>
