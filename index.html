@@ -380,9 +380,14 @@
           <span class="badge-label font-bold text-[10px] inline-block py-0.5 px-2">🔒 관리자 전용 대시보드</span>
           <h2 class="text-base font-black text-amber-950">테스트 통계 & 지원 응답함 📥</h2>
         </div>
-        <button onclick="lockAdminSession()" class="px-2.5 py-1 bg-amber-900 text-amber-100 rounded-lg text-xs font-bold border border-amber-950 hover:bg-amber-800 shadow-sm">
-          🔒 잠금
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="manualRefresh()" class="px-2.5 py-1 bg-amber-100 text-amber-950 rounded-lg text-xs font-bold border border-amber-900 hover:bg-amber-200 shadow-sm">
+            🔄 새로고침
+          </button>
+          <button onclick="lockAdminSession()" class="px-2.5 py-1 bg-amber-900 text-amber-100 rounded-lg text-xs font-bold border border-amber-950 hover:bg-amber-800 shadow-sm">
+            🔒 잠금
+          </button>
+        </div>
       </div>
 
       <!-- Private Analytics Summary Card -->
@@ -431,7 +436,6 @@
       <div>
         <h3 class="text-lg font-black text-amber-950">관리자 전용 인증</h3>
         <p class="text-xs handwriting text-amber-800 mt-0.5">테스트 참여 수 & 응답함은 본인만 확인 가능합니다!</p>
-        <p class="text-[11px] text-amber-600 font-bold mt-1">(기본 비밀번호: <span class="underline">1234</span>)</p>
       </div>
 
       <form onsubmit="handlePinSubmit(event)" class="space-y-2">
@@ -512,138 +516,92 @@
     <span id="toast-text">알림 메세지</span>
   </div>
 
-  <!-- Firebase Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  <!-- Backend (Google Apps Script) -->
+  <script>
+    // 배포한 Google Apps Script 웹 앱 URL을 여기에 붙여넣으세요.
+    // (Apps Script 에디터 > 배포 > 웹 앱 URL)
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbya8I0O_m8CD14bQikr8m9_mtxrR5ZAQFQBgApqJQsDW0pNvAaD0x8XGqI5iQBYmk4M/exec";
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'feed-mbti-app';
-    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-      apiKey: "dummy", authDomain: "dummy", projectId: "dummy"
-    };
-
-    let app, auth, db;
-    let currentUser = null;
     let allApplications = [];
     let totalTestCount = 0;
+    let adminPin = null; // 인증 성공 시에만 메모리에 잠깐 보관, 잠금 시 즉시 폐기
 
-    async function initFirebase() {
-      try {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-          currentUser = userCredential.user;
-        } else {
-          const userCredential = await signInAnonymously(auth);
-          currentUser = userCredential.user;
-        }
-
-        setupFirestoreListeners();
-      } catch (err) {
-        console.warn("Firebase Auth fallback:", err);
+    async function callBackend(action, payload) {
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에_')) {
+        console.warn('APPS_SCRIPT_URL이 설정되지 않았습니다.');
+        return { success: false, error: 'NOT_CONFIGURED' };
       }
-    }
-
-    function setupFirestoreListeners() {
-      if (!db || !currentUser) return;
-      
-      // Strict paths
-      const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
-      const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counter');
-
-      // Listen for applications
-      onSnapshot(colRef, (snapshot) => {
-        allApplications = [];
-        snapshot.forEach((docSnap) => {
-          allApplications.push({ id: docSnap.id, ...docSnap.data() });
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          // text/plain으로 보내야 Apps Script가 preflight(OPTIONS) 없이 바로 받습니다.
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action, ...payload })
         });
-        allApplications.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-        if (window.isAdminAuthenticated) {
-          renderResponsesList();
-        }
-      }, (error) => console.error("Applications listener error:", error));
-
-      // Listen for test count stat
-      onSnapshot(statsRef, (docSnap) => {
-        if (docSnap.exists()) {
-          totalTestCount = docSnap.data().testCount || 0;
-        } else {
-          totalTestCount = 0;
-        }
-        if (window.isAdminAuthenticated) {
-          updateStatsUI();
-        }
-      }, (error) => console.error("Stats listener error:", error));
+        return await res.json();
+      } catch (e) {
+        console.error('Backend call error:', action, e);
+        return { success: false, error: String(e) };
+      }
     }
 
     // Record test completion count silently
-    window.recordTestCompletion = async function() {
-      totalTestCount++;
-      if (!db || !currentUser) return;
-      try {
-        const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'stats', 'counter');
-        await setDoc(statsRef, { testCount: increment(1) }, { merge: true });
-      } catch (e) {
-        console.error("Record test count error:", e);
+    window.recordTestCompletion = async function () {
+      totalTestCount++; // 낙관적 업데이트(로컬 표시용)
+      await callBackend('recordTest', {});
+    };
+
+    window.saveApplicationToCloud = async function (formData) {
+      const result = await callBackend('submit', formData);
+      return !!result.success;
+    };
+
+    // 관리자 인증: PIN은 서버(Apps Script 스크립트 속성)에서만 검증됩니다.
+    window.adminAuthenticate = async function (pin) {
+      const result = await callBackend('adminAuth', { pin });
+      if (result.success) {
+        adminPin = pin;
+        allApplications = result.applications || [];
+        totalTestCount = (result.stats && result.stats.testCount) || 0;
+      }
+      return result;
+    };
+
+    window.refreshAdminData = async function () {
+      if (!adminPin) return;
+      const result = await callBackend('adminAuth', { pin: adminPin });
+      if (result.success) {
+        allApplications = result.applications || [];
+        totalTestCount = (result.stats && result.stats.testCount) || 0;
       }
     };
 
-    window.saveApplicationToCloud = async function(formData) {
-      if (!db || !currentUser) {
-        allApplications.unshift({ id: 'local-' + Date.now(), ...formData });
-        return true;
-      }
-
-      try {
-        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'applications');
-        await addDoc(colRef, formData);
-        return true;
-      } catch (e) {
-        console.error("Save application error:", e);
-        return false;
-      }
-    };
-
-    window.updateStatusInCloud = async function(appIdToUpdate, newStatus) {
-      if (!db || !currentUser) {
+    window.updateStatusInCloud = async function (appIdToUpdate, newStatus) {
+      if (!adminPin) return false;
+      const result = await callBackend('updateStatus', { pin: adminPin, id: appIdToUpdate, status: newStatus });
+      if (result.success) {
         const item = allApplications.find(a => a.id === appIdToUpdate);
         if (item) item.status = newStatus;
-        renderResponsesList();
-        return;
       }
-
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applications', appIdToUpdate);
-        await updateDoc(docRef, { status: newStatus });
-      } catch (e) {
-        console.error("Update status error:", e);
-      }
+      return !!result.success;
     };
 
-    window.deleteAppFromCloud = async function(appIdToDelete) {
-      if (!db || !currentUser) {
+    window.deleteAppFromCloud = async function (appIdToDelete) {
+      if (!adminPin) return false;
+      const result = await callBackend('deleteApplication', { pin: adminPin, id: appIdToDelete });
+      if (result.success) {
         allApplications = allApplications.filter(a => a.id !== appIdToDelete);
-        renderResponsesList();
-        return;
       }
+      return !!result.success;
+    };
 
-      try {
-        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'applications', appIdToDelete);
-        await deleteDoc(docRef);
-      } catch (e) {
-        console.error("Delete doc error:", e);
-      }
+    window.clearAdminPin = function () {
+      adminPin = null;
+      allApplications = [];
     };
 
     window.getTestCount = () => totalTestCount;
     window.getApplications = () => allApplications;
-
-    window.addEventListener('DOMContentLoaded', initFirebase);
   </script>
 
   <script>
@@ -809,7 +767,6 @@
       }
     };
 
-    let ADMIN_PIN = "1234";
     window.isAdminAuthenticated = false;
     let currentStep = 0;
     let userScores = { S: 0, R: 0, A: 0, N: 0, C: 0, D: 0 };
@@ -854,19 +811,27 @@
           const el = document.getElementById('responses-screen');
           el.classList.remove('hidden');
           el.classList.add('flex');
-          renderResponsesList();
-          updateStatsUI();
+          refreshAdminData().then(() => {
+            renderResponsesList();
+            updateStatsUI();
+          });
         }
       }
     }
 
-    function handlePinSubmit(e) {
+    async function handlePinSubmit(e) {
       e.preventDefault();
       const pin = document.getElementById('pin-input').value.trim();
-      if (pin === ADMIN_PIN) {
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+
+      const result = await window.adminAuthenticate(pin);
+      submitBtn.disabled = false;
+
+      if (result.success) {
         window.isAdminAuthenticated = true;
         document.getElementById('pin-modal').classList.add('hidden');
-        
+
         document.querySelectorAll('.tab-content').forEach(el => {
           el.classList.add('hidden');
           el.classList.remove('flex');
@@ -879,7 +844,11 @@
         showToast("🔓 관리자 인증 성공!");
         renderResponsesList();
         updateStatsUI();
+      } else if (result.error === 'NOT_CONFIGURED') {
+        document.getElementById('pin-error').textContent = '백엔드가 아직 연결되지 않았어요 (APPS_SCRIPT_URL 확인).';
+        document.getElementById('pin-error').classList.remove('hidden');
       } else {
+        document.getElementById('pin-error').textContent = '비밀번호가 일치하지 않습니다.';
         document.getElementById('pin-error').classList.remove('hidden');
       }
     }
@@ -891,6 +860,7 @@
 
     function lockAdminSession() {
       window.isAdminAuthenticated = false;
+      window.clearAdminPin();
       showToast("🔒 응답함이 잠겼습니다.");
       switchTab('test');
     }
@@ -1116,6 +1086,13 @@
       renderResponsesList();
     }
 
+    async function manualRefresh() {
+      showToast("🔄 새로고침 중...");
+      await refreshAdminData();
+      renderResponsesList();
+      updateStatsUI();
+    }
+
     function openDetailModal(id) {
       const allApps = window.getApplications ? window.getApplications() : [];
       const app = allApps.find(a => a.id === id);
@@ -1142,16 +1119,27 @@
 
     async function updateApplicantStatus(newStatus) {
       if (!currentSelectedAppId) return;
-      await window.updateStatusInCloud(currentSelectedAppId, newStatus);
-      document.getElementById('detail-status-badge').textContent = newStatus;
-      showToast(`상태가 '${newStatus}'(으)로 변경되었습니다.`);
+      const ok = await window.updateStatusInCloud(currentSelectedAppId, newStatus);
+      if (ok) {
+        document.getElementById('detail-status-badge').textContent = newStatus;
+        showToast(`상태가 '${newStatus}'(으)로 변경되었습니다.`);
+        renderResponsesList();
+      } else {
+        showToast("⚠️ 상태 변경에 실패했습니다.");
+      }
     }
 
     async function deleteApplicant() {
       if (!currentSelectedAppId) return;
-      await window.deleteAppFromCloud(currentSelectedAppId);
+      const ok = await window.deleteAppFromCloud(currentSelectedAppId);
       closeDetailModal();
-      showToast("🗑️ 데이터가 삭제되었습니다.");
+      if (ok) {
+        showToast("🗑️ 데이터가 삭제되었습니다.");
+        renderResponsesList();
+        updateStatsUI();
+      } else {
+        showToast("⚠️ 삭제에 실패했습니다.");
+      }
     }
 
     function showToast(msg) {
